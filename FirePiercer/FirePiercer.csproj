@@ -8,9 +8,10 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>FirePiercer</RootNamespace>
     <AssemblyName>FirePiercer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,6 +35,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,8 +54,36 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="PierceClient.cs" />
+    <Compile Include="PierceHeader.cs" />
+    <Compile Include="PierceMessage.cs" />
+    <Compile Include="Piercer\Piercer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Piercer\Piercer.Designer.cs">
+      <DependentUpon>Piercer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PierceServer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteDesk\ImageParcel.cs" />
+    <Compile Include="RemoteDesk\RemoteDeskGraphics.cs" />
+    <Compile Include="RemoteDesk\RemoteDeskRequest.cs" />
+    <Compile Include="RemoteDesk\ScreenShotWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteDesk\ScreenShotWindow.Designer.cs">
+      <DependentUpon>ScreenShotWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceModel\StringReverser.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Piercer\Piercer.resx">
+      <DependentUpon>Piercer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -61,7 +92,14 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RemoteDesk\ScreenShotWindow.resx">
+      <DependentUpon>ScreenShotWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="pluralsight.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -74,6 +112,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Repos\sonesson-tools\sonesson-tools.csproj">
+      <Project>{6b5c42cf-ab4c-4cf4-ba53-2c7dfca3fe9e}</Project>
+      <Name>sonesson-tools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
