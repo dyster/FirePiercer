@@ -11,7 +11,7 @@
         /// Reach out hand, payload is 4 bytes with version
         /// </summary>
         Handshake = 0x01,
-        
+
         /// <summary>
         /// Hand accepted, payload is uint32 with unique client id
         /// </summary>
@@ -31,7 +31,7 @@
         /// Initiates, changes or stops a remote desk session
         /// </summary>
         RemoteDeskRequest = 0x05,
-        
+
         Socks5 = 0x06,
 
         /// <summary>

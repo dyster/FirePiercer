@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FirePiercer;
+﻿using FirePiercer;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
 using sonesson_tools;
@@ -30,13 +27,13 @@ namespace FirePiercerServer
 
             _tcpServer.MessageReceived += _tcpServer_MessageReceived;
             _tcpServer.RemoteDeskRequestReceived += OnRemoteDeskRequest;
-            
+
             _tcpServer.SockParcelReceived += delegate(object o, SockParcel parcel)
             {
                 Logger.Log("ENDPOINT SEND: " + parcel, Severity.Debug);
                 _strumpEndpoint.SockOutgoing(parcel);
             };
-            
+
             _tcpServer.RoundTripReceived += (o, bytes) =>
             {
                 Logger.Log("Roundtrip! Length " + bytes.Length, Severity.Debug);
@@ -46,12 +43,7 @@ namespace FirePiercerServer
             };
         }
 
-        
 
-       
-
-        
-        
         private void OnRemoteDeskRequest(object sender, RemoteDeskRequest request)
         {
             // Not linux compatible yet
@@ -60,7 +52,6 @@ namespace FirePiercerServer
 
         private void _tcpServer_MessageReceived(object sender, sonesson_tools.TCP.TCPEventArgs e)
         {
-
             //Logger.Log("message received", Severity.Info);
         }
 
@@ -87,9 +78,6 @@ namespace FirePiercerServer
             _tcpServer.Send(message.MakeParcel());
         }
 
-        
-
-        
 
         public Stats Stats => _tcpServer.Stats;
     }

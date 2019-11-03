@@ -22,7 +22,7 @@ namespace FirePiercer
 
         public event EventHandler<SockParcel> SockParcelReceived;
 
-        public event EventHandler<byte[]> RoundTripReceived; 
+        public event EventHandler<byte[]> RoundTripReceived;
 
         public override byte[] ParseIncomingSSL(int read, byte[] initialBuffer, SslStream stream, ClientContext context)
         {
@@ -49,23 +49,20 @@ namespace FirePiercer
                     list.AddRange(initialBuffer);
 
                     var payload = new byte[len];
-                    
+
                     //int readback = stream.Read(payload, 0, len);
 
                     int bytesread = 0;
                     do
                     {
-                        int readback = stream.Read(payload, bytesread, len-bytesread);
+                        int readback = stream.Read(payload, bytesread, len - bytesread);
                         Stats.AddBytes(readback, ByteType.Received);
                         bytesread += readback;
-
-
                     } while (bytesread < len);
-                    
-                    
-                    
+
+
                     list.AddRange(payload);
-                    
+
 
                     if (bytesread != len)
                     {
@@ -85,7 +82,7 @@ namespace FirePiercer
                     list.AddRange(endbit);
 
                     PierceMessage message = PierceMessage.Parse(list.ToArray());
-                    
+
                     //Logger.Log("Message: " + message, Severity.Info);
 
 
@@ -100,8 +97,8 @@ namespace FirePiercer
                             Logger.Log("Handshake received, version " + BitConverter.ToString(payload), Severity.Info);
 
                             uint id = (uint) new Random().Next();
-                            while(_clientIds.Contains(id))
-                                id = (uint)new Random().Next();
+                            while (_clientIds.Contains(id))
+                                id = (uint) new Random().Next();
                             _clientIds.Add(id);
 
                             var pierceMessage = new PierceMessage(PierceHeader.HandshakeOK);
@@ -117,7 +114,7 @@ namespace FirePiercer
                         case PierceHeader.Message:
                             break;
                         case PierceHeader.ScreenShot:
-                            
+
                             break;
                         case PierceHeader.RemoteDeskRequest:
                             OnRemoteDeskRequestReceived(null);
@@ -138,7 +135,6 @@ namespace FirePiercer
                     Logger.Log("Invalid header received", Severity.Warning);
                     return null;
                 }
-                
             }
             else
             {

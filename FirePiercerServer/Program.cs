@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.Serialization;
 using System.Threading;
 using sonesson_tools;
 
@@ -11,13 +8,11 @@ namespace FirePiercerServer
 {
     class Program
     {
-        
         static void Main(string[] args)
         {
             Logger.Instance.LogAdded += (sender, log) =>
             {
-
-                if(log.Severity == Severity.Debug)
+                if (log.Severity == Severity.Debug)
                     return;
 
                 if (log.Severity == Severity.Error)
@@ -34,24 +29,21 @@ namespace FirePiercerServer
             };
 
             new MainApp();
-
-
-
         }
-
-        
     }
 
     public class MainApp
     {
         private Piercer _piercer;
+
         public MainApp()
         {
             Console.WriteLine("FirePiercer Server is starting, listing local IP's");
 
             foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (item.NetworkInterfaceType == NetworkInterfaceType.Ethernet && item.OperationalStatus == OperationalStatus.Up)
+                if (item.NetworkInterfaceType == NetworkInterfaceType.Ethernet &&
+                    item.OperationalStatus == OperationalStatus.Up)
                 {
                     foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
                     {

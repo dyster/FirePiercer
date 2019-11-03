@@ -29,20 +29,23 @@
 */
 
 using System.Net.Sockets;
-using Org.Mentalis.Proxy.Socks.Authentication;
 
-namespace Org.Mentalis.Proxy.Socks.Authentication {
+namespace Org.Mentalis.Proxy.Socks.Authentication
+{
+    ///<summary>Authenticates a user on a SOCKS5 server according to the 'No Authentication' subprotocol.</summary>
+    internal sealed class AuthNone : AuthBase
+    {
+        ///<summary>Initializes a new instance of the AuthNone class.</summary>
+        public AuthNone()
+        {
+        }
 
-///<summary>Authenticates a user on a SOCKS5 server according to the 'No Authentication' subprotocol.</summary>
-internal sealed class AuthNone : AuthBase {
-	///<summary>Initializes a new instance of the AuthNone class.</summary>
-	public AuthNone() {}
-	///<summary>Calls the parent class to inform it authentication is complete.</summary>
-	///<param name="Connection">The connection with the SOCKS client.</param>
-	///<param name="Callback">The method to call when the authentication is complete.</param>
-	internal override void StartAuthentication(Socket Connection, AuthenticationCompleteDelegate Callback) {
-		Callback(true);
-	}
-}
-
+        ///<summary>Calls the parent class to inform it authentication is complete.</summary>
+        ///<param name="Connection">The connection with the SOCKS client.</param>
+        ///<param name="Callback">The method to call when the authentication is complete.</param>
+        internal override void StartAuthentication(Socket Connection, AuthenticationCompleteDelegate Callback)
+        {
+            Callback(true);
+        }
+    }
 }

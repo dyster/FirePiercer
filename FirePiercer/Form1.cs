@@ -1,26 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using sonesson_tools;
-using System.ServiceModel;
 using FirePiercer.RemoteDesk;
-using FirePiercer.ServiceModel;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
-using sonesson_tools.Generic;
-using sonesson_tools.Strump;
 
 
 namespace FirePiercer
@@ -43,14 +31,14 @@ namespace FirePiercer
 
             Logger.Instance.LogAdded += (sender, log) =>
             {
-                if((checkBoxLogging.Checked && log.Severity == Severity.Debug) || log.Severity != Severity.Debug)
+                if ((checkBoxLogging.Checked && log.Severity == Severity.Debug) || log.Severity != Severity.Debug)
                     Print(log.ToString());
             };
 
 
             _strumpServer.SockOutgoing = (parcel) =>
             {
-                if(checkBoxLogging.Checked)
+                if (checkBoxLogging.Checked)
                     Logger.Log("STRUMP REC: " + parcel, Severity.Debug);
                 var pierceMessage = new PierceMessage(parcel);
                 _pierceClient.Send(pierceMessage);
@@ -87,7 +75,6 @@ namespace FirePiercer
 
             var httpListener = new Org.Mentalis.Proxy.Http.HttpListener(1081);
             httpListener.Start();
-
         }
 
 
@@ -136,7 +123,7 @@ namespace FirePiercer
         private void buttonSendClient_Click(object sender, EventArgs e)
         {
             var pierceMessage = new PierceMessage(PierceHeader.Message) {Message = textBox1.Text};
-            
+
             _pierceClient.Send(pierceMessage);
         }
 
@@ -181,11 +168,11 @@ namespace FirePiercer
         {
             timerFlicker.Enabled = true;
         }
-        
+
         private void ButtonRemoteDesk_Click(object sender, EventArgs e)
         {
             var pierceMessage = new PierceMessage(PierceHeader.RemoteDeskRequest);
-            
+
             _pierceClient.Send(pierceMessage);
         }
 
@@ -240,7 +227,7 @@ namespace FirePiercer
             // draw the text of the list item, not doing this will only show
             // the background color
             // you will need to get the text of item to display
-            
+
 
             e.DrawFocusRectangle();
         }

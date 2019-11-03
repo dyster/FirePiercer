@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using FirePiercer.RemoteDesk;
 using FirePiercerCommon;
-using sonesson_tools;
 using sonesson_tools.Strump;
 using sonesson_tools.TCP;
 
@@ -51,8 +41,8 @@ namespace FirePiercer.Piercer
 
         public event EventHandler<SockParcel> SockParcelReceived;
 
-        public event EventHandler<byte[]> RoundTripReceived; 
-        
+        public event EventHandler<byte[]> RoundTripReceived;
+
 
         private void OnRemoteDeskRequest(object sender, RemoteDeskRequest request)
         {
@@ -61,7 +51,6 @@ namespace FirePiercer.Piercer
 
         private void _tcpServer_MessageReceived(object sender, sonesson_tools.TCP.TCPEventArgs e)
         {
-
             //Logger.Log("message received", Severity.Info);
         }
 

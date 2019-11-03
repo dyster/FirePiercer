@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
@@ -31,7 +26,7 @@ namespace FirePiercer.RemoteDesk
             }
 
             var pierceMessage = new PierceMessage(new ImageParcel()
-                { JPEG = memstream.ToArray(), Size = bounds.Size, StartPoint = Point.Empty });
+                {JPEG = memstream.ToArray(), Size = bounds.Size, StartPoint = Point.Empty});
 
             return pierceMessage;
         }

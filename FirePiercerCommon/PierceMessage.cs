@@ -15,7 +15,6 @@ namespace FirePiercerCommon
         /// </summary>
         private PierceMessage()
         {
-
         }
 
         public PierceMessage(PierceHeader header)
@@ -50,7 +49,7 @@ namespace FirePiercerCommon
                 case PierceHeader.Invalid:
                     break;
                 case PierceHeader.Handshake:
-                    payload = new byte[] { 0, 1, 0, 0 };
+                    payload = new byte[] {0, 1, 0, 0};
                     break;
                 case PierceHeader.HandshakeOK:
                     payload = Payload;
@@ -68,10 +67,9 @@ namespace FirePiercerCommon
                     throw new ArgumentOutOfRangeException();
             }
 
-            
 
             var list = new List<byte> {0x02, 0x07};
-            list.AddRange(BitConverter.GetBytes((short)this.Header));
+            list.AddRange(BitConverter.GetBytes((short) this.Header));
             if (payload != null)
             {
                 int len = payload.Length;
@@ -84,6 +82,7 @@ namespace FirePiercerCommon
                 list.AddRange(BitConverter.GetBytes(0));
                 list.AddRange(BitConverter.GetBytes(0));
             }
+
             var parcel = list.ToArray();
             return parcel;
         }
@@ -101,7 +100,7 @@ namespace FirePiercerCommon
             var mem = new MemoryStream();
             mem.Write(Payload, 0, Payload.Length);
             var binaryFormatter = new BinaryFormatter();
-            return (ImageParcel)binaryFormatter.Deserialize(mem);
+            return (ImageParcel) binaryFormatter.Deserialize(mem);
         }
 
         /// <summary>
@@ -116,7 +115,6 @@ namespace FirePiercerCommon
                 short int16 = BitConverter.ToInt16(bytes, 2);
                 if (Enum.TryParse(int16.ToString(), out PierceHeader header))
                 {
-
                     int len = BitConverter.ToInt32(bytes, 4);
 
 
@@ -147,12 +145,10 @@ namespace FirePiercerCommon
                     message.Header = header;
                     int len = BitConverter.ToInt32(bytes, 4);
 
-                    
+
                     message.Payload = new byte[len];
 
-                    
-                    
-                    
+
                     if (bytes.Length != 8 + len + 4)
                     {
                         message.ParseError = "Data of incorrect length";
@@ -179,7 +175,6 @@ namespace FirePiercerCommon
                             return message;
                         default:
                             return message;
-
                     }
                 }
 
@@ -193,7 +188,6 @@ namespace FirePiercerCommon
 
         public string ParseError { get; set; }
 
-        
 
         public PierceHeader Header { get; set; }
 
@@ -208,8 +202,6 @@ namespace FirePiercerCommon
 
         public string Message { get; set; }
 
-        
-
 
         public override string ToString()
         {
@@ -223,6 +215,7 @@ namespace FirePiercerCommon
                     ret += ": Length " + Payload.Length;
                 }
             }
+
             return "ERROR: " + ParseError;
         }
     }
