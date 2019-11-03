@@ -13,6 +13,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using FirePiercer.RemoteDesk;
+using FirePiercerCommon;
+using FirePiercerCommon.RemoteDesk;
 using sonesson_tools;
 using sonesson_tools.Strump;
 using sonesson_tools.TCP;

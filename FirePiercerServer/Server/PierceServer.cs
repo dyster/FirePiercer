@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Security;
-using FirePiercer.RemoteDesk;
 using FirePiercerCommon;
+using FirePiercerCommon.RemoteDesk;
 using sonesson_tools;
 using sonesson_tools.Strump;
 using sonesson_tools.TCP;

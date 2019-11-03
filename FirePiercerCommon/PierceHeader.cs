@@ -1,4 +1,4 @@
-﻿namespace FirePiercer
+﻿namespace FirePiercerCommon
 {
     public enum PierceHeader : short
     {

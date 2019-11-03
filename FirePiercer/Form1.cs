@@ -15,9 +15,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using sonesson_tools;
 using System.ServiceModel;
-using FirePiercer.PierceService1;
 using FirePiercer.RemoteDesk;
 using FirePiercer.ServiceModel;
+using FirePiercerCommon;
+using FirePiercerCommon.RemoteDesk;
 using sonesson_tools.Generic;
 using sonesson_tools.Strump;
 
@@ -26,7 +27,7 @@ namespace FirePiercer
 {
     public partial class Form1 : Form //, PierceService1.IService1Callback
     {
-        private PierceClient _localpclient;
+        private PierceClient _pierceClient;
 
         //private Service1Client _serviceClient;
 
@@ -46,38 +47,13 @@ namespace FirePiercer
                     Print(log.ToString());
             };
 
-            //using (ServiceHost host = new ServiceHost(
-            //    typeof(StringReverser), new Uri("net.tcp://localhost:8000")))
-            //{
-            //    host.AddServiceEndpoint(typeof(IStringReverser),
-            //        new NetTcpBinding(),
-            //        "Reverse");
-            //
-            //
-            //    host.Open();
-            //
-            //    ChannelFactory<IStringReverser> httpFactory =
-            //        new ChannelFactory<IStringReverser>(
-            //            new NetTcpBinding(),
-            //            new EndpointAddress(
-            //                "net.tcp://localhost:8000"));
-            //
-            //
-            //
-            //    IStringReverser tcpProxy =
-            //        httpFactory.CreateChannel();
-            //
-            //    var reverseString = tcpProxy.ReverseString("1234");
-            //    //host.Close();
-            //}
-
 
             _strumpServer.SockOutgoing = (parcel) =>
             {
                 if(checkBoxLogging.Checked)
                     Logger.Log("STRUMP REC: " + parcel, Severity.Debug);
                 var pierceMessage = new PierceMessage(parcel);
-                _localpclient.Send(pierceMessage);
+                _pierceClient.Send(pierceMessage);
             };
 
             _strumpEndpoint.SockReturn += parcel =>
@@ -107,6 +83,11 @@ namespace FirePiercer
 
 
             _strumpServer.Start();
+
+
+            var httpListener = new Org.Mentalis.Proxy.Http.HttpListener(1081);
+            httpListener.Start();
+
         }
 
 
@@ -156,27 +137,27 @@ namespace FirePiercer
         {
             var pierceMessage = new PierceMessage(PierceHeader.Message) {Message = textBox1.Text};
             
-            _localpclient.Send(pierceMessage);
+            _pierceClient.Send(pierceMessage);
         }
 
         private void MakeLocalClient(string ip)
         {
             X509Certificate2 cert = new X509Certificate2("pluralsight.pfx", "1234");
-            _localpclient = new PierceClient(ip, 443, cert);
-            _localpclient.ImageRecieved += LocalpclientOnImageRecieved;
-            _localpclient.SockParcelReceived += (sender, parcel) =>
+            _pierceClient = new PierceClient(ip, 443, cert);
+            _pierceClient.ImageRecieved += PierceClientOnImageRecieved;
+            _pierceClient.SockParcelReceived += (sender, parcel) =>
             {
                 if (checkBoxLogging.Checked)
                     Logger.Log("STRUMP SEND: " + parcel, Severity.Debug);
                 _strumpServer.SockIncoming(parcel);
             };
-            _localpclient.RoundTripReturn += (sender, bytes) =>
+            _pierceClient.RoundTripReturn += (sender, bytes) =>
             {
                 Logger.Log("RoundTrip Return, match: " + _testBytes.SequenceEqual(bytes), Severity.Info);
             };
         }
 
-        private void LocalpclientOnImageRecieved(object sender, ImageParcel e)
+        private void PierceClientOnImageRecieved(object sender, ImageParcel e)
         {
             Image img;
             using (var ms = new MemoryStream(e.JPEG))
@@ -191,7 +172,7 @@ namespace FirePiercer
         {
             //labelStrumpStats.Text = _strumpServer.Stats.ToString() + " frag " + _fragmentPiper.Count;
             if (_piercer != null) label1.Text = "PierceServer: " + _piercer.Stats;
-            if (_localpclient != null) label2.Text = "PierceClient: " + _localpclient.Stats;
+            if (_pierceClient != null) label2.Text = "PierceClient: " + _pierceClient.Stats;
             if (_strumpServer != null) label3.Text = "StrumpServer: " + _strumpServer.Stats;
             if (_strumpEndpoint != null) label4.Text = "StrumpClient: " + _strumpEndpoint.Stats;
         }
@@ -200,83 +181,12 @@ namespace FirePiercer
         {
             timerFlicker.Enabled = true;
         }
-
-        /*
-        private void buttonWCFConnect_Click(object sender, EventArgs e)
-        {
-            var context = new InstanceContext(null, this);
-            _serviceClient = new PierceService1.Service1Client(context);
-
-
-            //create a unique callback address so multiple clients can run on one machine
-            WSDualHttpBinding binding = (WSDualHttpBinding)_serviceClient.Endpoint.Binding;
-            binding.MaxReceivedMessageSize = 67108864;
-            //string clientcallbackaddress = binding.ClientBaseAddress.AbsoluteUri;
-            //clientcallbackaddress += Guid.NewGuid().ToString();
-            //binding.ClientBaseAddress = new Uri(clientcallbackaddress);
-
-            _serviceClient.Endpoint.Address = new EndpointAddress($"http://{textBoxServerIP.Text}:{textBoxServerPort.Text}/Design_Time_Addresses/PierceService/Service1/");
-
-
-            var clientInfo = new ClientInfo() {HostName = System.Environment.MachineName};
-            //_serviceClient.Endpoint.Address = 
-            
-            clientInfo = _serviceClient.Subscribe(clientInfo);
-
-            Logger.Log("Succesfully subscribed: " + clientInfo.Subscribed, Severity.Info);
-
-            //var returnstring = client.GetData("12334");
-            
-
-            //Logger.Log(returnstring, Severity.Info);
-        }
         
-             private void buttonTest_Click(object sender, EventArgs e)
-        {
-            var parcel = new SockParcel
-            {
-                UniqueId = 5,
-                Parcel = new byte[40000]
-            };
-            var ran = new Random();
-            ran.NextBytes(parcel.Parcel);
-
-            var fragments = FragmentPiper.Fragment(parcel, 4000, parcel.UniqueId);
-
-            foreach (var fragment in fragments)
-            {
-                //_serviceClient.SockSendAsync(fragment);
-            }
-        }
-
-            public void Message(string msg)
-        {
-            Logger.Log(msg, Severity.Info);
-        }
-
-        public void SockReturn(Fragment fragment)
-        {
-            var reconstruct = _fragmentPiper.Reconstruct(fragment);
-            if (reconstruct != null)
-            {
-                var parcel = (SockParcel) reconstruct;
-                _strumpServer.SockIncoming(parcel);
-                //if(parcel.Parcel.Length > 4000)
-                //    Logger.Log("STRUMP: " + Functions.PrettyPrintSize(parcel.Parcel.Length) + " received from pipe", Severity.Info);
-            }
-            
-            
-            
-        }
-             
-             */
-
-
         private void ButtonRemoteDesk_Click(object sender, EventArgs e)
         {
             var pierceMessage = new PierceMessage(PierceHeader.RemoteDeskRequest);
             
-            _localpclient.Send(pierceMessage);
+            _pierceClient.Send(pierceMessage);
         }
 
         private void ButtonTestP_Click(object sender, EventArgs e)
@@ -287,7 +197,7 @@ namespace FirePiercer
                 new Random().NextBytes(bytes);
                 var pierceMessage = new PierceMessage(PierceHeader.RoundTrip) {Payload = bytes};
                 _testBytes = bytes;
-                _localpclient.Send(pierceMessage);
+                _pierceClient.Send(pierceMessage);
             });
         }
 

@@ -54,9 +54,28 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Mentalis\AuthBase.cs" />
+    <Compile Include="Mentalis\AuthenticationList.cs" />
+    <Compile Include="Mentalis\AuthNone.cs" />
+    <Compile Include="Mentalis\AuthUserPass.cs" />
+    <Compile Include="Mentalis\Client.cs" />
+    <Compile Include="Mentalis\ConsoleAttributes.cs" />
+    <Compile Include="Mentalis\FtpClient.cs" />
+    <Compile Include="Mentalis\FtpDataConnection.cs" />
+    <Compile Include="Mentalis\FtpListener.cs" />
+    <Compile Include="Mentalis\HttpClient.cs" />
+    <Compile Include="Mentalis\HttpListener.cs" />
+    <Compile Include="Mentalis\Listener.cs" />
+    <Compile Include="Mentalis\PortMapClient.cs" />
+    <Compile Include="Mentalis\PortMapListener.cs" />
+    <Compile Include="Mentalis\Proxy.cs" />
+    <Compile Include="Mentalis\ProxyConfig.cs" />
+    <Compile Include="Mentalis\Socks4Handler.cs" />
+    <Compile Include="Mentalis\Socks5Handler.cs" />
+    <Compile Include="Mentalis\SocksClient.cs" />
+    <Compile Include="Mentalis\SocksHandler.cs" />
+    <Compile Include="Mentalis\SocksListener.cs" />
     <Compile Include="PierceClient.cs" />
-    <Compile Include="PierceHeader.cs" />
-    <Compile Include="PierceMessage.cs" />
     <Compile Include="Piercer\Piercer.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -68,7 +87,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteDesk\ImageParcel.cs" />
     <Compile Include="RemoteDesk\RemoteDeskGraphics.cs" />
     <Compile Include="RemoteDesk\RemoteDeskRequest.cs" />
     <Compile Include="RemoteDesk\ScreenShotWindow.cs">
@@ -97,6 +115,8 @@
     <EmbeddedResource Include="RemoteDesk\ScreenShotWindow.resx">
       <DependentUpon>ScreenShotWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Mentalis\make.bat" />
+    <None Include="Mentalis\Proxy.chm" />
     <None Include="pluralsight.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -114,10 +134,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Repos\sonesson-tools\sonesson-tools.csproj">
-      <Project>{6b5c42cf-ab4c-4cf4-ba53-2c7dfca3fe9e}</Project>
-      <Name>sonesson-tools</Name>
+    <ProjectReference Include="..\..\..\..\Repos\sonesson-tools\sonesson-toolsNETSTANDARD.csproj">
+      <Project>{0b694bcb-6f7d-47c7-bdd0-1ea14f3d8e85}</Project>
+      <Name>sonesson-toolsNETSTANDARD</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FirePiercerCommon\FirePiercerCommon.csproj">
+      <Project>{1256d81d-70a9-4ac9-a759-d7a67031c65a}</Project>
+      <Name>FirePiercerCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mentalis\license.txt" />
+    <Content Include="Mentalis\readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

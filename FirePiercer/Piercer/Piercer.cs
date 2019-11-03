@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FirePiercer.RemoteDesk;
+using FirePiercerCommon;
 using sonesson_tools;
 using sonesson_tools.Strump;
 using sonesson_tools.TCP;

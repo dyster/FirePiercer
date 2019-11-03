@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using FirePiercer.RemoteDesk;
+using FirePiercerCommon.RemoteDesk;
 using sonesson_tools.Strump;
 
-namespace FirePiercer
+namespace FirePiercerCommon
 {
     public class PierceMessage
     {
