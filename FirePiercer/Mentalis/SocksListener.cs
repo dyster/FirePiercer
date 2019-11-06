@@ -32,6 +32,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using Org.Mentalis.Proxy.Socks.Authentication;
+using sonesson_tools;
 
 namespace Org.Mentalis.Proxy.Socks
 {
@@ -86,10 +87,12 @@ namespace Org.Mentalis.Proxy.Socks
                         new SocksClient(NewSocket, new DestroyDelegate(this.RemoveClient), AuthList);
                     AddClient(NewClient);
                     NewClient.StartHandshake();
+                    Logger.Log("Mentalis accepting new client " + NewClient.ToString(), Severity.Info);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Log(e);
             }
 
             try

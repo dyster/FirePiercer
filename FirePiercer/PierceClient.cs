@@ -66,14 +66,19 @@ namespace FirePiercer
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             var x509Certificate2Collection = new X509Certificate2Collection(Cert);
-            ssl.AuthenticateAsClient(Ip, x509Certificate2Collection, SslProtocols.Tls12, false);
+            try
+            {
+                ssl.AuthenticateAsClient(Ip, x509Certificate2Collection, SslProtocols.Tls12, false);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
 
             Logger.Log("Connected to " + Ip + ":" + Port, Severity.Info);
 
             var pierceMessage = new PierceMessage(PierceHeader.Handshake);
-
-            Version ver = new Version(0, 1, 0, 0);
-
+            
             byte[] parcel = pierceMessage.MakeParcel();
 
             var tuple = new Tuple<byte[], SslStream>(parcel, ssl);
@@ -210,7 +215,11 @@ namespace FirePiercer
 
         public void Send(PierceMessage message)
         {
-            _sender.Send(message.MakeParcel());
+            message.SenderId = _id;
+            var makeParcel = message.MakeParcel();
+            _sender.Send(makeParcel);
+            Stats.AddPacket(PacketType.Sent);
+            Stats.AddBytes(makeParcel.Length, ByteType.Sent);
         }
 
         public event EventHandler<ImageParcel> ImageRecieved;

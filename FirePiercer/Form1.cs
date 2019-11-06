@@ -38,43 +38,18 @@ namespace FirePiercer
 
             _strumpServer.SockOutgoing = (parcel) =>
             {
-                if (checkBoxLogging.Checked)
+                if (checkBoxLogging.Checked && parcel.Parcel.Length > 5000)
                     Logger.Log("STRUMP REC: " + parcel, Severity.Debug);
                 var pierceMessage = new PierceMessage(parcel);
                 _pierceClient.Send(pierceMessage);
             };
-
-            _strumpEndpoint.SockReturn += parcel =>
-            {
-                if (checkBoxLogging.Checked)
-                    Logger.Log("ENDPOINT REC: " + parcel, Severity.Debug);
-                var pierceMessage = new PierceMessage(parcel);
-                _piercer.Send(pierceMessage);
-                //_strumpServer.SockIncoming(parcel);
-            };
-
-
-            _piercer.SockParcelReceived += (sender, parcel) =>
-            {
-                if (checkBoxLogging.Checked)
-                    Logger.Log("ENDPOINT SEND: " + parcel, Severity.Debug);
-                _strumpEndpoint.SockOutgoing(parcel);
-            };
-
-            _piercer.RoundTripReceived += (sender, bytes) =>
-            {
-                Logger.Log("Roundtrip! Length " + bytes.Length, Severity.Debug);
-                var pierceMessage = new PierceMessage(PierceHeader.RoundTrip);
-                pierceMessage.Payload = bytes;
-                _piercer.Send(pierceMessage);
-            };
-
+            
 
             _strumpServer.Start();
 
 
-            var httpListener = new Org.Mentalis.Proxy.Http.HttpListener(1081);
-            httpListener.Start();
+            //var socksListener = new Org.Mentalis.Proxy.Socks.SocksListener(1081);
+            //socksListener.Start();
         }
 
 
@@ -90,36 +65,13 @@ namespace FirePiercer
                 listBox1.SelectedIndex = -1;
             }
         }
-
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            _piercer.StartServer();
-
-
-            ThreadPool.QueueUserWorkItem(x =>
-            {
-                Thread.Sleep(1000);
-
-                MakeLocalClient("127.0.0.1");
-            });
-        }
-
-        private void buttonStartServer_Click(object sender, EventArgs e)
-        {
-            _piercer.StartServer();
-        }
+        
 
         private void buttonStartClient_Click(object sender, EventArgs e)
         {
             ThreadPool.QueueUserWorkItem(x => { MakeLocalClient(textBoxConnectIP.Text); });
         }
-
-        private void buttonSendServer_Click(object sender, EventArgs e)
-        {
-            _piercer.SendMessage(textBox1.Text);
-        }
-
+        
         private void buttonSendClient_Click(object sender, EventArgs e)
         {
             var pierceMessage = new PierceMessage(PierceHeader.Message) {Message = textBox1.Text};
@@ -134,7 +86,7 @@ namespace FirePiercer
             _pierceClient.ImageRecieved += PierceClientOnImageRecieved;
             _pierceClient.SockParcelReceived += (sender, parcel) =>
             {
-                if (checkBoxLogging.Checked)
+                if (checkBoxLogging.Checked && parcel.Parcel.Length > 5000)
                     Logger.Log("STRUMP SEND: " + parcel, Severity.Debug);
                 _strumpServer.SockIncoming(parcel);
             };
@@ -158,7 +110,7 @@ namespace FirePiercer
         private void timerFlicker_Tick(object sender, EventArgs e)
         {
             //labelStrumpStats.Text = _strumpServer.Stats.ToString() + " frag " + _fragmentPiper.Count;
-            if (_piercer != null) label1.Text = "PierceServer: " + _piercer.Stats;
+            
             if (_pierceClient != null) label2.Text = "PierceClient: " + _pierceClient.Stats;
             if (_strumpServer != null) label3.Text = "StrumpServer: " + _strumpServer.Stats;
             if (_strumpEndpoint != null) label4.Text = "StrumpClient: " + _strumpEndpoint.Stats;

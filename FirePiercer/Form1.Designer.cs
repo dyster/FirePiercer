@@ -29,13 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            sonesson_tools.TCP.Stats stats2 = new sonesson_tools.TCP.Stats();
+            sonesson_tools.TCP.Stats stats1 = new sonesson_tools.TCP.Stats();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.buttonStartServer = new System.Windows.Forms.Button();
             this.buttonStartClient = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.buttonSendServer = new System.Windows.Forms.Button();
             this.buttonSendClient = new System.Windows.Forms.Button();
             this.timerFlicker = new System.Windows.Forms.Timer(this.components);
             this.buttonRemoteDesk = new System.Windows.Forms.Button();
@@ -49,7 +46,6 @@
             this.textBoxConnectIP = new System.Windows.Forms.TextBox();
             this._strumpServer = new sonesson_tools.Strump.StrumpServer();
             this._strumpEndpoint = new sonesson_tools.Strump.StrumpEndpoint(this.components);
-            this._piercer = new FirePiercer.Piercer.Piercer(this.components);
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,26 +62,6 @@
             this.listBox1.TabIndex = 0;
             this.listBox1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox1_DrawItem);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(160, 127);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Dual";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // buttonStartServer
-            // 
-            this.buttonStartServer.Location = new System.Drawing.Point(12, 12);
-            this.buttonStartServer.Name = "buttonStartServer";
-            this.buttonStartServer.Size = new System.Drawing.Size(75, 23);
-            this.buttonStartServer.TabIndex = 2;
-            this.buttonStartServer.Text = "Start Server";
-            this.buttonStartServer.UseVisualStyleBackColor = true;
-            this.buttonStartServer.Click += new System.EventHandler(this.buttonStartServer_Click);
-            // 
             // buttonStartClient
             // 
             this.buttonStartClient.Location = new System.Drawing.Point(12, 81);
@@ -98,24 +74,14 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(93, 27);
+            this.textBox1.Location = new System.Drawing.Point(12, 12);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(204, 20);
             this.textBox1.TabIndex = 4;
             // 
-            // buttonSendServer
-            // 
-            this.buttonSendServer.Location = new System.Drawing.Point(303, 12);
-            this.buttonSendServer.Name = "buttonSendServer";
-            this.buttonSendServer.Size = new System.Drawing.Size(145, 23);
-            this.buttonSendServer.TabIndex = 5;
-            this.buttonSendServer.Text = "Send Msg from server";
-            this.buttonSendServer.UseVisualStyleBackColor = true;
-            this.buttonSendServer.Click += new System.EventHandler(this.buttonSendServer_Click);
-            // 
             // buttonSendClient
             // 
-            this.buttonSendClient.Location = new System.Drawing.Point(303, 41);
+            this.buttonSendClient.Location = new System.Drawing.Point(222, 10);
             this.buttonSendClient.Name = "buttonSendClient";
             this.buttonSendClient.Size = new System.Drawing.Size(145, 23);
             this.buttonSendClient.TabIndex = 6;
@@ -130,7 +96,7 @@
             // 
             // buttonRemoteDesk
             // 
-            this.buttonRemoteDesk.Location = new System.Drawing.Point(454, 41);
+            this.buttonRemoteDesk.Location = new System.Drawing.Point(401, 12);
             this.buttonRemoteDesk.Name = "buttonRemoteDesk";
             this.buttonRemoteDesk.Size = new System.Drawing.Size(75, 23);
             this.buttonRemoteDesk.TabIndex = 10;
@@ -161,27 +127,29 @@
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Monospac821 BT", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(3, 23);
             this.label2.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
+            this.label2.Size = new System.Drawing.Size(49, 14);
             this.label2.TabIndex = 14;
             this.label2.Text = "label2";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 41);
+            this.label3.Font = new System.Drawing.Font("Monospac821 BT", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(3, 42);
             this.label3.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(35, 13);
+            this.label3.Size = new System.Drawing.Size(49, 14);
             this.label3.TabIndex = 15;
             this.label3.Text = "label3";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 59);
+            this.label4.Location = new System.Drawing.Point(3, 61);
             this.label4.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
@@ -225,7 +193,7 @@
             // 
             this._strumpServer.InitialBufferSize = 2;
             this._strumpServer.Port = 1080;
-            this._strumpServer.Stats = stats2;
+            this._strumpServer.Stats = stats1;
             this._strumpServer.UseSSL = false;
             // 
             // Form1
@@ -239,11 +207,8 @@
             this.Controls.Add(this.textBoxConnectIP);
             this.Controls.Add(this.buttonRemoteDesk);
             this.Controls.Add(this.buttonSendClient);
-            this.Controls.Add(this.buttonSendServer);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonStartClient);
-            this.Controls.Add(this.buttonStartServer);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.listBox1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -258,15 +223,11 @@
 
         #endregion
         private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button buttonStartServer;
         private System.Windows.Forms.Button buttonStartClient;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button buttonSendServer;
         private System.Windows.Forms.Button buttonSendClient;
         private sonesson_tools.Strump.StrumpServer _strumpServer;
         private System.Windows.Forms.Timer timerFlicker;
-        private Piercer.Piercer _piercer;
         private System.Windows.Forms.Button buttonRemoteDesk;
         private System.Windows.Forms.TextBox textBoxConnectIP;
         private sonesson_tools.Strump.StrumpEndpoint _strumpEndpoint;

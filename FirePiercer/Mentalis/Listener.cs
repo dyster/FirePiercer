@@ -32,6 +32,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections;
+using sonesson_tools;
 
 namespace Org.Mentalis.Proxy
 {
@@ -119,6 +120,7 @@ namespace Org.Mentalis.Proxy
                 ListenSocket.Bind(new IPEndPoint(Address, Port));
                 ListenSocket.Listen(50);
                 ListenSocket.BeginAccept(new AsyncCallback(this.OnAccept), ListenSocket);
+                Logger.Log("Mentalis started listening on " + ListenSocket.LocalEndPoint.ToString(), Severity.Info);
             }
             catch
             {

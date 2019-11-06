@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Net.Security;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
@@ -20,16 +22,18 @@ namespace FirePiercer
             RemoteDeskRequestReceived?.Invoke(this, e);
         }
 
-        public event EventHandler<SockParcel> SockParcelReceived;
+        public event EventHandler<SockeEventArgs> SockParcelReceived;
 
-        public event EventHandler<byte[]> RoundTripReceived;
+        public event EventHandler<RoundTripEventArgs> RoundTripReceived;
+
+        public BindingList<RemoteClientInfo> Clients { get; set; } = new BindingList<RemoteClientInfo>();
 
         public override byte[] ParseIncomingSSL(int read, byte[] initialBuffer, SslStream stream, ClientContext context)
         {
             Stats.AddBytes(read, ByteType.Received);
             Stats.AddPacket(PacketType.Received);
 
-            if (read != 8)
+            if (read != this.InitialBufferSize)
             {
                 Logger.Log("Initial buffer incorrect size", Severity.Warning);
                 return null;
@@ -40,7 +44,7 @@ namespace FirePiercer
                 short int16 = BitConverter.ToInt16(initialBuffer, 2);
                 if (Enum.TryParse(int16.ToString(), out PierceHeader header))
                 {
-                    int len = BitConverter.ToInt32(initialBuffer, 4);
+                    int len = BitConverter.ToInt32(initialBuffer, 8);
 
                     //Logger.Log(header.ToString(), Severity.Info);
                     //Logger.Log("Length: " + len, Severity.Info);
@@ -100,6 +104,7 @@ namespace FirePiercer
                             while (_clientIds.Contains(id))
                                 id = (uint) new Random().Next();
                             _clientIds.Add(id);
+                            Clients.Add(new RemoteClientInfo(id, context));
 
                             var pierceMessage = new PierceMessage(PierceHeader.HandshakeOK);
                             pierceMessage.Payload = BitConverter.GetBytes(id);
@@ -121,10 +126,26 @@ namespace FirePiercer
                             break;
                         case PierceHeader.Socks5:
                             var sockParcel = SockParcel.DeSerialize(message.Payload);
-                            OnSockParcelReceived(sockParcel);
+                            if (_clientIds.Contains(message.SenderId))
+                            {
+                                OnSockParcelReceived(Clients.First(c => c.ID == message.SenderId), sockParcel);
+                            }
+                            else
+                            {
+                                Logger.Log(message.SenderId + " is an unrecognized Client ID", Severity.Warning);
+                            }
+                            
                             break;
                         case PierceHeader.RoundTrip:
-                            OnRoundTripReceived(message.Payload);
+                            
+                            if (_clientIds.Contains(message.SenderId))
+                            {
+                                OnRoundTripReceived(Clients.First(c => c.ID == message.SenderId), message.Payload);
+                            }
+                            else
+                            {
+                                Logger.Log(message.SenderId + " is an unrecognized Client ID", Severity.Warning);
+                            }
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -146,19 +167,51 @@ namespace FirePiercer
         }
 
 
-        protected virtual void OnSockParcelReceived(SockParcel e)
+        protected virtual void OnSockParcelReceived(RemoteClientInfo client, SockParcel parcel)
         {
-            SockParcelReceived?.Invoke(this, e);
+            SockParcelReceived?.Invoke(this, new SockeEventArgs(){Client = client, SockParcel = parcel});
         }
 
-        protected virtual void OnRoundTripReceived(byte[] e)
+        protected virtual void OnRoundTripReceived(RemoteClientInfo client, byte[] payload)
         {
-            RoundTripReceived?.Invoke(this, e);
+            RoundTripReceived?.Invoke(this, new RoundTripEventArgs(){Client = client, Payload = payload});
         }
+
+        public void Send()
+        {
+            
+        }
+    }
+
+    public class SockeEventArgs : EventArgs
+    {
+        public RemoteClientInfo Client { get; set; }
+        public SockParcel SockParcel { get; set; }
+    }
+
+    public class RoundTripEventArgs : EventArgs
+    {
+        public RemoteClientInfo Client { get; set; }
+        public byte[] Payload { get; set; }
     }
 
     public class RemoteClientInfo
     {
+        public RemoteClientInfo(uint id, ClientContext context)
+        {
+            ID = id;
+            Created = DateTime.Now;
+            Context = context;
+        }
+
         public uint ID { get; set; }
+        public DateTime Created { get; set; }
+        public ClientContext Context { get; set; }
+
+        public override string ToString()
+        {
+            return ID.ToString();
+        }
+        
     }
 }
