@@ -46,6 +46,7 @@
             this.textBoxConnectIP = new System.Windows.Forms.TextBox();
             this._strumpServer = new sonesson_tools.Strump.StrumpServer();
             this._strumpEndpoint = new sonesson_tools.Strump.StrumpEndpoint(this.components);
+            this.textBoxConnectPort = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -196,11 +197,22 @@
             this._strumpServer.Stats = stats1;
             this._strumpServer.UseSSL = false;
             // 
+            // textBoxConnectPort
+            // 
+            this.textBoxConnectPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::FirePiercer.Properties.Settings.Default, "ClientPort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxConnectPort.Location = new System.Drawing.Point(303, 83);
+            this.textBoxConnectPort.Name = "textBoxConnectPort";
+            this.textBoxConnectPort.Size = new System.Drawing.Size(100, 20);
+            this.textBoxConnectPort.TabIndex = 19;
+            this.textBoxConnectPort.Text = global::FirePiercer.Properties.Settings.Default.ClientPort;
+            this.textBoxConnectPort.TextChanged += new System.EventHandler(this.textBoxConnectPort_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1668, 450);
+            this.Controls.Add(this.textBoxConnectPort);
             this.Controls.Add(this.checkBoxLogging);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.buttonTestP);
@@ -238,6 +250,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.CheckBox checkBoxLogging;
+        private System.Windows.Forms.TextBox textBoxConnectPort;
     }
 }
 

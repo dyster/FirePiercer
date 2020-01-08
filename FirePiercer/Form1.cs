@@ -69,7 +69,7 @@ namespace FirePiercer
 
         private void buttonStartClient_Click(object sender, EventArgs e)
         {
-            ThreadPool.QueueUserWorkItem(x => { MakeLocalClient(textBoxConnectIP.Text); });
+            ThreadPool.QueueUserWorkItem(x => { MakeLocalClient(textBoxConnectIP.Text, textBoxConnectPort.Text); });
         }
         
         private void buttonSendClient_Click(object sender, EventArgs e)
@@ -79,10 +79,10 @@ namespace FirePiercer
             _pierceClient.Send(pierceMessage);
         }
 
-        private void MakeLocalClient(string ip)
+        private void MakeLocalClient(string ip, string port)
         {
             X509Certificate2 cert = new X509Certificate2("pluralsight.pfx", "1234");
-            _pierceClient = new PierceClient(ip, 443, cert);
+            _pierceClient = new PierceClient(ip, int.Parse(port), cert);
             _pierceClient.ImageRecieved += PierceClientOnImageRecieved;
             _pierceClient.SockParcelReceived += (sender, parcel) =>
             {
@@ -182,6 +182,11 @@ namespace FirePiercer
 
 
             e.DrawFocusRectangle();
+        }
+
+        private void textBoxConnectPort_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
