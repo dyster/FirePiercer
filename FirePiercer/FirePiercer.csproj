@@ -122,7 +122,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Repos\sonesson-tools\sonesson-toolsNETSTANDARD.csproj">
+    <ProjectReference Include="..\..\sonesson-tools\sonesson-toolsNETSTANDARD.csproj">
       <Project>{0b694bcb-6f7d-47c7-bdd0-1ea14f3d8e85}</Project>
       <Name>sonesson-toolsNETSTANDARD</Name>
     </ProjectReference>

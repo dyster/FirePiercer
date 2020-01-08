@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Repos\sonesson-tools\sonesson-toolsNETSTANDARD.csproj" />
+    <ProjectReference Include="..\..\sonesson-tools\sonesson-toolsNETSTANDARD.csproj" />
   </ItemGroup>
 
 </Project>
