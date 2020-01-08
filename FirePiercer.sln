@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirePiercer", "FirePiercer\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirePiercerServer", "FirePiercerServer\FirePiercerServer.csproj", "{6B9C5E63-AF50-49CA-87B4-19C0F97CE84F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sonesson-toolsNETSTANDARD", "..\..\..\Repos\sonesson-tools\sonesson-toolsNETSTANDARD.csproj", "{0B694BCB-6F7D-47C7-BDD0-1EA14F3D8E85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sonesson-toolsNETSTANDARD", "..\sonesson-tools\sonesson-toolsNETSTANDARD.csproj", "{0B694BCB-6F7D-47C7-BDD0-1EA14F3D8E85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirePiercerCommon", "FirePiercerCommon\FirePiercerCommon.csproj", "{1256D81D-70A9-4AC9-A759-D7A67031C65A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirePiercerCommon", "FirePiercerCommon\FirePiercerCommon.csproj", "{1256D81D-70A9-4AC9-A759-D7A67031C65A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
