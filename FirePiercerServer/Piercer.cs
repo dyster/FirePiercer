@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using FirePiercer;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
+using Konsole;
 using sonesson_tools;
 using sonesson_tools.Strump;
 using sonesson_tools.TCP;
