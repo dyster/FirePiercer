@@ -60,10 +60,14 @@ namespace FirePiercerServer
 
             DoStatus();
 
+            var lastline = "";
             while (true)
             {
                 Thread.Sleep(1000);
-                Console.WriteLine(_piercer.Stats.ToString());
+                var stat = _piercer.Stats.ToString();
+                if(stat != lastline)
+                    Console.WriteLine(stat);
+                lastline = stat;
             }
 
             //DoMenu();
