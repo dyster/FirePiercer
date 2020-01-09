@@ -221,50 +221,50 @@ namespace Org.Mentalis.Proxy.Http
         private StringDictionary ParseQuery(string Query)
         {
             StringDictionary retdict = new StringDictionary();
-            string[] Lines = Query.Replace("\r\n", "\n").Split('\n');
-            int Cnt, Ret;
+            string[] lines = Query.Replace("\r\n", "\n").Split('\n');
+            int cnt, ret;
             //Extract requested URL
-            if (Lines.Length > 0)
+            if (lines.Length > 0)
             {
                 //Parse the Http Request Type
-                Ret = Lines[0].IndexOf(' ');
-                if (Ret > 0)
+                ret = lines[0].IndexOf(' ');
+                if (ret > 0)
                 {
-                    HttpRequestType = Lines[0].Substring(0, Ret);
-                    Lines[0] = Lines[0].Substring(Ret).Trim();
+                    HttpRequestType = lines[0].Substring(0, ret);
+                    lines[0] = lines[0].Substring(ret).Trim();
                 }
 
                 //Parse the Http Version and the Requested Path
-                Ret = Lines[0].LastIndexOf(' ');
-                if (Ret > 0)
+                ret = lines[0].LastIndexOf(' ');
+                if (ret > 0)
                 {
-                    HttpVersion = Lines[0].Substring(Ret).Trim();
-                    RequestedPath = Lines[0].Substring(0, Ret);
+                    HttpVersion = lines[0].Substring(ret).Trim();
+                    RequestedPath = lines[0].Substring(0, ret);
                 }
                 else
                 {
-                    RequestedPath = Lines[0];
+                    RequestedPath = lines[0];
                 }
 
                 //Remove http:// if present
                 if (RequestedPath.Length >= 7 && RequestedPath.Substring(0, 7).ToLower().Equals("http://"))
                 {
-                    Ret = RequestedPath.IndexOf('/', 7);
-                    if (Ret == -1)
+                    ret = RequestedPath.IndexOf('/', 7);
+                    if (ret == -1)
                         RequestedPath = "/";
                     else
-                        RequestedPath = RequestedPath.Substring(Ret);
+                        RequestedPath = RequestedPath.Substring(ret);
                 }
             }
 
-            for (Cnt = 1; Cnt < Lines.Length; Cnt++)
+            for (cnt = 1; cnt < lines.Length; cnt++)
             {
-                Ret = Lines[Cnt].IndexOf(":");
-                if (Ret > 0 && Ret < Lines[Cnt].Length - 1)
+                ret = lines[cnt].IndexOf(":");
+                if (ret > 0 && ret < lines[cnt].Length - 1)
                 {
                     try
                     {
-                        retdict.Add(Lines[Cnt].Substring(0, Ret), Lines[Cnt].Substring(Ret + 1).Trim());
+                        retdict.Add(lines[cnt].Substring(0, ret), lines[cnt].Substring(ret + 1).Trim());
                     }
                     catch
                     {
@@ -328,13 +328,13 @@ namespace Org.Mentalis.Proxy.Http
             string Ret;
             try
             {
-                if (DestinationSocket == null || DestinationSocket.RemoteEndPoint == null)
+                if (DestinationSocket?.RemoteEndPoint == null)
                     Ret = "Incoming HTTP connection from " +
-                          ((IPEndPoint) ClientSocket.RemoteEndPoint).Address.ToString();
+                          ((IPEndPoint) ClientSocket.RemoteEndPoint).Address;
                 else
-                    Ret = "HTTP connection from " + ((IPEndPoint) ClientSocket.RemoteEndPoint).Address.ToString() +
-                          " to " + ((IPEndPoint) DestinationSocket.RemoteEndPoint).Address.ToString() + " on port " +
-                          ((IPEndPoint) DestinationSocket.RemoteEndPoint).Port.ToString();
+                    Ret = "HTTP connection from " + ((IPEndPoint) ClientSocket.RemoteEndPoint).Address +
+                          " to " + ((IPEndPoint) DestinationSocket.RemoteEndPoint).Address + " on port " +
+                          ((IPEndPoint) DestinationSocket.RemoteEndPoint).Port;
                 if (HeaderFields != null && HeaderFields.ContainsKey("Host") && RequestedPath != null)
                     Ret += "\r\n" + " requested URL: http://" + HeaderFields["Host"] + RequestedPath;
             }
@@ -350,24 +350,24 @@ namespace Org.Mentalis.Proxy.Http
         ///<param name="ar">The result of the asynchronous operation.</param>
         private void OnReceiveQuery(IAsyncResult ar)
         {
-            int Ret;
+            int ret;
             try
             {
-                Ret = ClientSocket.EndReceive(ar);
+                ret = ClientSocket.EndReceive(ar);
             }
             catch
             {
-                Ret = -1;
+                ret = -1;
             }
 
-            if (Ret <= 0)
+            if (ret <= 0)
             {
                 //Connection is dead :(
                 Dispose();
                 return;
             }
 
-            HttpQuery += Encoding.ASCII.GetString(Buffer, 0, Ret);
+            HttpQuery += Encoding.ASCII.GetString(Buffer, 0, ret);
             //if received data is valid HTTP request...
             if (IsValidQuery(HttpQuery))
             {
