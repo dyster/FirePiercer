@@ -81,7 +81,7 @@ namespace FirePiercer
 
         private void MakeLocalClient(string ip, string port)
         {
-            X509Certificate2 cert = new X509Certificate2("pluralsight.pfx", "1234");
+            X509Certificate2 cert = new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
             _pierceClient = new PierceClient(ip, int.Parse(port), cert);
             _pierceClient.ImageRecieved += PierceClientOnImageRecieved;
             _pierceClient.SockParcelReceived += (sender, parcel) =>

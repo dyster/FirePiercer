@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Security.Cryptography.X509Certificates;
 using FirePiercer;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
@@ -18,6 +19,10 @@ namespace FirePiercerServer
         public Piercer()
         {
             _tcpServer = new PierceServer {InitialBufferSize = 12, Port = 443, UseSSL = true};
+
+            X509Certificate2 cert = new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
+            _tcpServer.Certificate = cert;
+
             _tcpServer.Clients.ListChanged += ClientsOnListChanged;
             _strumpEndpoints = new Dictionary<uint, StrumpEndpoint>();
             
