@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Goblinfactory.Konsole" Version="5.4.2" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>
