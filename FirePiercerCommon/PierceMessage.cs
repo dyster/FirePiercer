@@ -138,6 +138,8 @@ namespace FirePiercerCommon
         public static bool CheckMessageComplete(byte[] bytes)
         {
             var headerLength = GetHeaderLength(bytes);
+            if (headerLength == -1)
+                return false;
             return bytes.Length == 12 + headerLength + 4;
         }
 
