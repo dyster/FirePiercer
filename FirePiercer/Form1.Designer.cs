@@ -172,8 +172,6 @@
             // checkBoxLogging
             // 
             this.checkBoxLogging.AutoSize = true;
-            this.checkBoxLogging.Checked = true;
-            this.checkBoxLogging.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxLogging.Location = new System.Drawing.Point(356, 132);
             this.checkBoxLogging.Name = "checkBoxLogging";
             this.checkBoxLogging.Size = new System.Drawing.Size(64, 17);
@@ -192,6 +190,7 @@
             // 
             // _strumpServer
             // 
+            this._strumpServer.Certificate = null;
             this._strumpServer.InitialBufferSize = 2;
             this._strumpServer.Port = 1080;
             this._strumpServer.Stats = stats1;

@@ -73,6 +73,8 @@ namespace FirePiercer
             catch (Exception e)
             {
                 Logger.Log(e);
+                Reconnect();
+                return;
             }
 
             Logger.Log("Connected to " + Ip + ":" + Port, Severity.Info);
@@ -83,7 +85,16 @@ namespace FirePiercer
 
             var tuple = new Tuple<byte[], SslStream>(parcel, ssl);
 
-            ssl.BeginWrite(parcel, 0, parcel.Length, WriteCallBack, tuple);
+            try
+            {
+                ssl.BeginWrite(parcel, 0, parcel.Length, WriteCallBack, tuple);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                Reconnect();
+                return;
+            }
         }
 
         private void WriteCallBack(IAsyncResult ar)
@@ -127,11 +138,16 @@ namespace FirePiercer
                 return;
             }
 
+            if (bytesRead == 0)
+            {
+                Logger.Log("0 bytes read, terminating", Severity.Warning);
+                Reconnect();
+                return;
+            }
+
             Stats.AddBytes(bytesRead, ByteType.Received);
             state.ms.Write(state.buffer, 0, bytesRead);
-
-            var headerLength = PierceMessage.GetHeaderLength(state.ms.ToArray());
-
+            
             while (!PierceMessage.CheckMessageComplete(state.ms.ToArray()))
             {
                 var readbuffer = new byte[1024];
