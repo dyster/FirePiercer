@@ -40,6 +40,12 @@ namespace FirePiercerCommon
             Payload = sockParcel.Serialize();
         }
 
+        public PierceMessage(object obj)
+        {
+            Header = PierceHeader.Object;
+            SerializePayload(obj);
+        }
+
         public byte[] MakeParcel()
         {
             byte[] payload = null;
@@ -61,6 +67,7 @@ namespace FirePiercerCommon
                 case PierceHeader.RemoteDeskRequest:
                 case PierceHeader.Socks5:
                 case PierceHeader.RoundTrip:
+                case PierceHeader.Object:
                     payload = Payload;
                     break;
                 default:
@@ -101,6 +108,18 @@ namespace FirePiercerCommon
             var binaryFormatter = new BinaryFormatter();
             binaryFormatter.Serialize(mem, o);
             Payload = mem.ToArray();
+        }
+
+        public object DeserializePayload()
+        {
+            object deserialize;
+            using (var memoryStream = new MemoryStream(this.Payload))
+            {
+                var binaryFormatter = new BinaryFormatter();
+                deserialize = binaryFormatter.Deserialize(memoryStream);
+            }
+
+            return deserialize;
         }
 
         public ImageParcel GetImageParcel()

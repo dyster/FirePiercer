@@ -37,6 +37,11 @@
         /// <summary>
         /// Used for testing
         /// </summary>
-        RoundTrip = 0x07
+        RoundTrip = 0x07,
+
+        /// <summary>
+        /// A serialized object
+        /// </summary>
+        Object = 0x08
     }
 }
