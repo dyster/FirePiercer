@@ -41,11 +41,13 @@ namespace FirePiercer
                 if (checkBoxLogging.Checked && parcel.Parcel.Length > 5000)
                     Logger.Log("STRUMP REC: " + parcel, Severity.Debug);
                 var pierceMessage = new PierceMessage(parcel);
+                while(!_pierceClient.Connected)
+                    Thread.Sleep(1000);
                 _pierceClient.Send(pierceMessage);
             };
             
 
-            _strumpServer.Start();
+            
 
 
             //var socksListener = new Org.Mentalis.Proxy.Socks.SocksListener(1081);
@@ -84,16 +86,28 @@ namespace FirePiercer
             X509Certificate2 cert = new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
             _pierceClient = new PierceClient(ip, int.Parse(port), cert);
             _pierceClient.ImageRecieved += PierceClientOnImageRecieved;
+
             _pierceClient.SockParcelReceived += (sender, parcel) =>
             {
                 if (checkBoxLogging.Checked && parcel.Parcel.Length > 5000)
                     Logger.Log("STRUMP SEND: " + parcel, Severity.Debug);
                 _strumpServer.SockIncoming(parcel);
             };
+
             _pierceClient.RoundTripReturn += (sender, bytes) =>
             {
                 Logger.Log("RoundTrip Return, match: " + _testBytes.SequenceEqual(bytes), Severity.Info);
             };
+
+            _pierceClient.ConnectionStatusChanged += (sender, args) =>
+            {
+                if (_pierceClient.Connected && !_strumpServer.Running)
+                {
+                    _strumpServer.Start();
+                }
+            };
+
+            _pierceClient.Connect();
         }
 
         private void PierceClientOnImageRecieved(object sender, ImageParcel e)
@@ -147,6 +161,8 @@ namespace FirePiercer
 
         private void ListBox1_DrawItem(object sender, DrawItemEventArgs e)
         {
+            if (e.Index == -1)
+                return;
             var s = listBox1.Items[e.Index].ToString();
 
             e.DrawBackground();

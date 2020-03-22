@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -26,6 +27,9 @@ namespace FirePiercer
         private ConcurrentSender _sender;
 
         public Stats Stats = new Stats();
+        private bool _connected;
+
+        public event EventHandler ConnectionStatusChanged; 
 
         public PierceClient(string ip, int port, X509Certificate2 cert)
         {
@@ -36,10 +40,10 @@ namespace FirePiercer
 
             //_client = new TcpClient(ip, port) { NoDelay = true, Client = { DontFragment = true } };
 
-            Connect();
+            
         }
 
-        private void Connect()
+        public void Connect()
 
         {
             _client = new TcpClient() {NoDelay = true, Client = {DontFragment = true}};
@@ -52,6 +56,7 @@ namespace FirePiercer
             try
             {
                 _client.EndConnect(ar);
+                
             }
             catch (SocketException e)
             {
@@ -78,6 +83,7 @@ namespace FirePiercer
             }
 
             Logger.Log("Connected to " + Ip + ":" + Port, Severity.Info);
+            this.Connected = true;
 
             var pierceMessage = new PierceMessage(PierceHeader.Handshake);
             
@@ -94,6 +100,20 @@ namespace FirePiercer
                 Logger.Log(e);
                 Reconnect();
                 return;
+            }
+        }
+
+        public bool Connected
+        {
+            get { return _connected; }
+            set
+            {
+                if (_connected != value)
+                {
+                    _connected = value;
+                    OnConnectionStatusChanged();
+                }
+                
             }
         }
 
@@ -114,6 +134,7 @@ namespace FirePiercer
 
         private void Reconnect()
         {
+            this.Connected = false;
             Thread.Sleep(2000);
 
             Connect();
@@ -191,6 +212,9 @@ namespace FirePiercer
                     case PierceHeader.RoundTrip:
                         OnRoundTripReturn(message.Payload);
                         break;
+                    case PierceHeader.Object:
+                        OnObjectReceived(message);
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -201,6 +225,14 @@ namespace FirePiercer
             StateObject newstate = new StateObject(state.ssl);
             state.ssl.BeginRead(newstate.buffer, 0, StateObject.BufferSize, ReadCallBack, newstate);
         }
+
+        private void OnObjectReceived(PierceMessage message)
+        {
+            var o = message.DeserializePayload();
+
+            throw new Exception("Unknown object received");
+        }
+
 
         public event EventHandler<SockParcel> SockParcelReceived;
 
@@ -255,6 +287,11 @@ namespace FirePiercer
         protected virtual void OnRoundTripReturn(byte[] e)
         {
             RoundTripReturn?.Invoke(this, e);
+        }
+
+        protected virtual void OnConnectionStatusChanged()
+        {
+            ConnectionStatusChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
