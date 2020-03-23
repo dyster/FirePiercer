@@ -38,7 +38,7 @@ namespace FirePiercer
 
             _strumpServer.SockOutgoing = (parcel) =>
             {
-                if (checkBoxLogging.Checked && parcel.Parcel.Length > 5000)
+                if (parcel.Parcel != null && (checkBoxLogging.Checked && parcel.Parcel.Length > 5000))
                     Logger.Log("STRUMP REC: " + parcel, Severity.Debug);
                 var pierceMessage = new PierceMessage(parcel);
                 while(!_pierceClient.Connected)
@@ -89,7 +89,8 @@ namespace FirePiercer
 
             _pierceClient.SockParcelReceived += (sender, parcel) =>
             {
-                if (checkBoxLogging.Checked && parcel.Parcel.Length > 5000)
+
+                if (parcel.Parcel != null && (checkBoxLogging.Checked && parcel.Parcel.Length > 5000))
                     Logger.Log("STRUMP SEND: " + parcel, Severity.Debug);
                 _strumpServer.SockIncoming(parcel);
             };
