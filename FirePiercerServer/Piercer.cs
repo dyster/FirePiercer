@@ -31,7 +31,7 @@ namespace FirePiercerServer
 
             _tcpServer.SockParcelReceived += delegate(object o, SockeEventArgs e)
             {
-                Logger.Log("ENDPOINT SEND: " + e.SockParcel, Severity.Debug);
+                
 
                 if (!_strumpEndpoints.ContainsKey(e.Client.ID))
                 {
@@ -40,7 +40,7 @@ namespace FirePiercerServer
                     
                     ep.SockReturn += parcel =>
                     {
-                        Logger.Log("ENDPOINT REC: " + parcel, Severity.Debug);
+                        
                         var pierceMessage = new PierceMessage(parcel);
                         Send(pierceMessage, e.Client);
                         //_strumpServer.SockIncoming(parcel);
