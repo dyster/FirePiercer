@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace FirePiercer
 {
     public class PierceServer : TCPServer
     {
-        private readonly HashSet<uint> _clientIds = new HashSet<uint>();
+        //private readonly HashSet<uint> _clientIds = new HashSet<uint>();
 
         public event EventHandler<RemoteDeskRequest> RemoteDeskRequestReceived;
 
@@ -26,7 +27,9 @@ namespace FirePiercer
 
         public event EventHandler<RoundTripEventArgs> RoundTripReceived;
 
-        public BindingList<RemoteClientInfo> Clients { get; set; } = new BindingList<RemoteClientInfo>();
+        //public BindingList<RemoteClientInfo> RemoteClientInfos { get; set; } = new BindingList<RemoteClientInfo>();
+
+        public ConcurrentDictionary<uint, RemoteClientInfo> RemoteClientList { get; set; } = new ConcurrentDictionary<uint, RemoteClientInfo>();
 
         public override byte[] ParseIncomingSSL(int read, byte[] initialBuffer, SslStream stream, ClientContext context)
         {
@@ -101,10 +104,12 @@ namespace FirePiercer
                             Logger.Log("Handshake received, version " + BitConverter.ToString(payload), Severity.Info);
 
                             uint id = (uint) new Random().Next();
-                            while (_clientIds.Contains(id))
+                            while (RemoteClientList.ContainsKey(id))
                                 id = (uint) new Random().Next();
-                            _clientIds.Add(id);
-                            Clients.Add(new RemoteClientInfo(id, context));
+
+                            if(!RemoteClientList.TryAdd(id, new RemoteClientInfo(id, context)))
+                                throw new Exception("Conflicting key on creation, this is impossible");
+                            
 
                             var pierceMessage = new PierceMessage(PierceHeader.HandshakeOK);
                             pierceMessage.Payload = BitConverter.GetBytes(id);
@@ -126,9 +131,9 @@ namespace FirePiercer
                             break;
                         case PierceHeader.Socks5:
                             var sockParcel = SockParcel.DeSerialize(message.Payload);
-                            if (_clientIds.Contains(message.SenderId))
+                            if (RemoteClientList.ContainsKey(message.SenderId))
                             {
-                                OnSockParcelReceived(Clients.First(c => c.ID == message.SenderId), sockParcel);
+                                OnSockParcelReceived(RemoteClientList[message.SenderId], sockParcel);
                             }
                             else
                             {
@@ -138,9 +143,9 @@ namespace FirePiercer
                             break;
                         case PierceHeader.RoundTrip:
                             
-                            if (_clientIds.Contains(message.SenderId))
+                            if (RemoteClientList.ContainsKey(message.SenderId))
                             {
-                                OnRoundTripReceived(Clients.First(c => c.ID == message.SenderId), message.Payload);
+                                OnRoundTripReceived(RemoteClientList[message.SenderId], message.Payload);
                             }
                             else
                             {
@@ -176,11 +181,6 @@ namespace FirePiercer
         {
             RoundTripReceived?.Invoke(this, new RoundTripEventArgs(){Client = client, Payload = payload});
         }
-
-        public void Send()
-        {
-            
-        }
     }
 
     public class SockeEventArgs : EventArgs
@@ -204,7 +204,7 @@ namespace FirePiercer
             Context = context;
         }
 
-        public uint ID { get; set; }
+        public uint ID { get; }
         public DateTime Created { get; set; }
         public ClientContext Context { get; set; }
 

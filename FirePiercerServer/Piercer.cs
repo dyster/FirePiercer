@@ -24,6 +24,11 @@ namespace FirePiercerServer
             _tcpServer.Certificate = cert;
 
             _tcpServer.Clients.ListChanged += ClientsOnListChanged;
+            _tcpServer.Clients.ClientRemoved += (sender, guid) =>
+            {
+                Logger.Log("Client Removed: " + guid, Severity.Info );
+            };
+            
             _strumpEndpoints = new Dictionary<uint, StrumpEndpoint>();
             
             _tcpServer.MessageReceived += _tcpServer_MessageReceived;
@@ -37,6 +42,7 @@ namespace FirePiercerServer
                 {
                     var ep = new StrumpEndpoint();
                     _strumpEndpoints.Add(e.Client.ID, ep);
+                    Logger.Log("New StrumpEndPoint for client " + e.Client.ID, Severity.Info);
                     
                     ep.SockReturn += parcel =>
                     {
@@ -71,7 +77,7 @@ namespace FirePiercerServer
                     log += "New " + _tcpServer.Clients[e.NewIndex];
                     break;
                 case ListChangedType.ItemDeleted:
-                    log += "Deleted " + _tcpServer.Clients[e.NewIndex];
+                    log += "Deleted a client";
                     break;
                 case ListChangedType.ItemMoved:
                     // not interesting
