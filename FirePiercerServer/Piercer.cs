@@ -35,7 +35,7 @@ namespace FirePiercerServer
             _tcpServer.RemoteDeskRequestReceived += OnRemoteDeskRequest;
 
             _tcpServer.SockParcelReceived += delegate(object o, SockeEventArgs e)
-            {
+            { 
                 
 
                 if (!_strumpEndpoints.ContainsKey(e.Client.ID))

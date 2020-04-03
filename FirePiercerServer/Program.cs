@@ -20,7 +20,7 @@ namespace FirePiercerServer
                 else if (log.Severity == Severity.Warning)
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 else
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
 
 
                 Console.WriteLine(log.ToString());
@@ -79,7 +79,9 @@ namespace FirePiercerServer
             if (_piercer == null)
                 Console.WriteLine("PierceServer: Not Started");
             else
-                Console.WriteLine("PierceServer: Started");
+            {
+                Console.WriteLine("PierceServer: Started"); ;
+            }
             Console.WriteLine("********** ------ **********");
         }
 
