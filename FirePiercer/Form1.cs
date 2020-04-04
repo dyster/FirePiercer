@@ -29,6 +29,8 @@ namespace FirePiercer
         {
             InitializeComponent();
 
+            _strumpServer.SetSyncContext(fastDataListView1);
+
             Logger.Instance.LogAdded += (sender, log) =>
             {
                 if ((checkBoxLogging.Checked && log.Severity == Severity.Debug) || log.Severity != Severity.Debug)
@@ -41,13 +43,13 @@ namespace FirePiercer
                 //if (parcel.Parcel != null && (checkBoxLogging.Checked && parcel.Parcel.Length > 5000))
                 //    Logger.Log("STRUMP REC: " + parcel, Severity.Debug);
                 var pierceMessage = new PierceMessage(parcel);
-                while(!_pierceClient.Connected)
+                while (!_pierceClient.Connected)
                     Thread.Sleep(1000);
                 _pierceClient.Send(pierceMessage);
             };
-            
 
-            
+
+            fastDataListView1.DataSource = _strumpServer.SockConnections;
 
 
             //var socksListener = new Org.Mentalis.Proxy.Socks.SocksListener(1081);
@@ -67,13 +69,13 @@ namespace FirePiercer
                 listBox1.SelectedIndex = -1;
             }
         }
-        
+
 
         private void buttonStartClient_Click(object sender, EventArgs e)
         {
             ThreadPool.QueueUserWorkItem(x => { MakeLocalClient(textBoxConnectIP.Text, textBoxConnectPort.Text); });
         }
-        
+
         private void buttonSendClient_Click(object sender, EventArgs e)
         {
             var pierceMessage = new PierceMessage(PierceHeader.Message) {Message = textBox1.Text};
@@ -83,13 +85,13 @@ namespace FirePiercer
 
         private void MakeLocalClient(string ip, string port)
         {
-            X509Certificate2 cert = new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
+            X509Certificate2 cert =
+                new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
             _pierceClient = new PierceClient(ip, int.Parse(port), cert);
             _pierceClient.ImageRecieved += PierceClientOnImageRecieved;
 
             _pierceClient.SockParcelReceived += (sender, parcel) =>
             {
-
                 //if (parcel.Parcel != null && (checkBoxLogging.Checked && parcel.Parcel.Length > 5000))
                 //    Logger.Log("STRUMP SEND: " + parcel, Severity.Debug);
                 _strumpServer.SockIncoming(parcel);
@@ -125,7 +127,7 @@ namespace FirePiercer
         private void timerFlicker_Tick(object sender, EventArgs e)
         {
             //labelStrumpStats.Text = _strumpServer.Stats.ToString() + " frag " + _fragmentPiper.Count;
-            
+
             if (_pierceClient != null) label2.Text = "PierceClient: " + _pierceClient.Stats;
             if (_strumpServer != null) label3.Text = "StrumpServer: " + _strumpServer.Stats;
             if (_strumpEndpoint != null) label4.Text = "StrumpClient: " + _strumpEndpoint.Stats;
@@ -203,7 +205,6 @@ namespace FirePiercer
 
         private void textBoxConnectPort_TextChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

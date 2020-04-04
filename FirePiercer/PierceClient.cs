@@ -26,7 +26,7 @@ namespace FirePiercer
 
         private ConcurrentSender _sender;
 
-        public Stats Stats = new Stats();
+        public readonly Stats Stats = new Stats();
         private bool _connected;
 
         public event EventHandler ConnectionStatusChanged; 
@@ -66,7 +66,15 @@ namespace FirePiercer
             }
 
             SslStream ssl = new SslStream(_client.GetStream(), false, ValidateServerCertificate, null);
-            _sender = new ConcurrentSender(ssl);
+
+            if(_sender == null)
+                _sender = new ConcurrentSender(ssl);
+            else
+            {
+                _sender.SetStream(ssl);
+                if(_sender.Paused)
+                    _sender.UnPause();
+            }
 
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -134,6 +142,7 @@ namespace FirePiercer
 
         private void Reconnect()
         {
+            _sender.Pause();
             this.Connected = false;
             Thread.Sleep(2000);
 

@@ -48,19 +48,20 @@
             this._strumpServer = new sonesson_tools.Strump.StrumpServer();
             this._strumpEndpoint = new sonesson_tools.Strump.StrumpEndpoint(this.components);
             this.textBoxConnectPort = new System.Windows.Forms.TextBox();
+            this.fastDataListView1 = new BrightIdeasSoftware.FastDataListView();
             this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fastDataListView1)).BeginInit();
             this.SuspendLayout();
             // 
             // listBox1
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(12, 161);
+            this.listBox1.Location = new System.Drawing.Point(783, 161);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(1644, 277);
+            this.listBox1.Size = new System.Drawing.Size(873, 524);
             this.listBox1.TabIndex = 0;
             this.listBox1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox1_DrawItem);
             // 
@@ -207,11 +208,29 @@
             this.textBoxConnectPort.Text = global::FirePiercer.Properties.Settings.Default.ClientPort;
             this.textBoxConnectPort.TextChanged += new System.EventHandler(this.textBoxConnectPort_TextChanged);
             // 
+            // fastDataListView1
+            // 
+            this.fastDataListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.fastDataListView1.CellEditUseWholeCell = false;
+            this.fastDataListView1.DataSource = null;
+            this.fastDataListView1.HideSelection = false;
+            this.fastDataListView1.Location = new System.Drawing.Point(12, 161);
+            this.fastDataListView1.Name = "fastDataListView1";
+            this.fastDataListView1.ShowGroups = false;
+            this.fastDataListView1.Size = new System.Drawing.Size(765, 524);
+            this.fastDataListView1.TabIndex = 20;
+            this.fastDataListView1.UseCompatibleStateImageBehavior = false;
+            this.fastDataListView1.View = System.Windows.Forms.View.Details;
+            this.fastDataListView1.VirtualMode = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1668, 450);
+            this.ClientSize = new System.Drawing.Size(1668, 707);
+            this.Controls.Add(this.fastDataListView1);
             this.Controls.Add(this.textBoxConnectPort);
             this.Controls.Add(this.checkBoxLogging);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -229,6 +248,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fastDataListView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -252,6 +272,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.CheckBox checkBoxLogging;
         private System.Windows.Forms.TextBox textBoxConnectPort;
+        private BrightIdeasSoftware.FastDataListView fastDataListView1;
     }
 }
 
