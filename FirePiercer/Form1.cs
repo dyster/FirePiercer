@@ -31,6 +31,8 @@ namespace FirePiercer
 
             _strumpServer.SetSyncContext(fastDataListView1);
 
+
+
             Logger.Instance.LogAdded += (sender, log) =>
             {
                 if ((checkBoxLogging.Checked && log.Severity == Severity.Debug) || log.Severity != Severity.Debug)
@@ -51,6 +53,8 @@ namespace FirePiercer
 
             fastDataListView1.DataSource = _strumpServer.SockConnections;
 
+            
+
 
             //var socksListener = new Org.Mentalis.Proxy.Socks.SocksListener(1081);
             //socksListener.Start();
@@ -67,6 +71,16 @@ namespace FirePiercer
             {
                 listBox1.Items.Add(log);
                 listBox1.SelectedIndex = -1;
+            }
+        }
+
+        private void SenderStatusUpdate(string s)
+        {
+            if (this.InvokeRequired)
+                this.Invoke(new VoidStringDelegate(SenderStatusUpdate), s);
+            else
+            {
+                labelSenderStatusUpdate.Text = s;
             }
         }
 
@@ -110,8 +124,12 @@ namespace FirePiercer
                 }
             };
 
+            _pierceClient.SenderStatusUpdate += (sender, s) => SenderStatusUpdate(s);
+
             _pierceClient.Connect();
         }
+
+        
 
         private void PierceClientOnImageRecieved(object sender, ImageParcel e)
         {
@@ -130,7 +148,7 @@ namespace FirePiercer
 
             if (_pierceClient != null) label2.Text = "PierceClient: " + _pierceClient.Stats;
             if (_strumpServer != null) label3.Text = "StrumpServer: " + _strumpServer.Stats;
-            if (_strumpEndpoint != null) label4.Text = "StrumpClient: " + _strumpEndpoint.Stats;
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)

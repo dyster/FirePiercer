@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -29,7 +30,9 @@ namespace FirePiercer
         public readonly Stats Stats = new Stats();
         private bool _connected;
 
-        public event EventHandler ConnectionStatusChanged; 
+        public event EventHandler ConnectionStatusChanged;
+
+        public event EventHandler<string> SenderStatusUpdate;
 
         public PierceClient(string ip, int port, X509Certificate2 cert)
         {
@@ -67,8 +70,11 @@ namespace FirePiercer
 
             SslStream ssl = new SslStream(_client.GetStream(), false, ValidateServerCertificate, null);
 
-            if(_sender == null)
+            if (_sender == null)
+            {
                 _sender = new ConcurrentSender(ssl);
+                _sender.StatusUpdate += (sender, s) => OnSenderStatusUpdate(s);
+            }
             else
             {
                 _sender.SetStream(ssl);
@@ -301,6 +307,11 @@ namespace FirePiercer
         protected virtual void OnConnectionStatusChanged()
         {
             ConnectionStatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnSenderStatusUpdate(string e)
+        {
+            SenderStatusUpdate?.Invoke(this, e);
         }
     }
 }

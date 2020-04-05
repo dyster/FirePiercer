@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using FirePiercer;
 using FirePiercerCommon;
@@ -49,7 +50,13 @@ namespace FirePiercerServer
                         
                         var pierceMessage = new PierceMessage(parcel);
                         Send(pierceMessage, e.Client);
+                        
                         //_strumpServer.SockIncoming(parcel);
+                    };
+
+                    ep.Points.ListChanged += delegate(object sender, ListChangedEventArgs args)
+                    {
+                        Program.SetSockConnections(ep.Points.ToList());
                     };
                 }
                 

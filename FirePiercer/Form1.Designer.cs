@@ -41,12 +41,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            
+            this.labelSenderStatusUpdate = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.checkBoxLogging = new System.Windows.Forms.CheckBox();
             this.textBoxConnectIP = new System.Windows.Forms.TextBox();
             this._strumpServer = new sonesson_tools.Strump.StrumpServer();
-            this._strumpEndpoint = new sonesson_tools.Strump.StrumpEndpoint(this.components);
             this.textBoxConnectPort = new System.Windows.Forms.TextBox();
             this.fastDataListView1 = new BrightIdeasSoftware.FastDataListView();
             this.flowLayoutPanel1.SuspendLayout();
@@ -148,23 +148,25 @@
             this.label3.Size = new System.Drawing.Size(49, 14);
             this.label3.TabIndex = 15;
             this.label3.Text = "label3";
+           
             // 
-            // label4
+            // labelSenderStatusUpdate
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 61);
-            this.label4.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 16;
-            this.label4.Text = "label4";
+            this.labelSenderStatusUpdate.AutoSize = true;
+            this.labelSenderStatusUpdate.Location = new System.Drawing.Point(3, 80);
+            this.labelSenderStatusUpdate.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
+            this.labelSenderStatusUpdate.Name = "labelSenderStatusUpdate";
+            this.labelSenderStatusUpdate.Size = new System.Drawing.Size(35, 13);
+            this.labelSenderStatusUpdate.TabIndex = 16;
+            this.labelSenderStatusUpdate.Text = "labelSenderStatusUpdate";
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.label1);
             this.flowLayoutPanel1.Controls.Add(this.label2);
             this.flowLayoutPanel1.Controls.Add(this.label3);
-            this.flowLayoutPanel1.Controls.Add(this.label4);
+            
+            this.flowLayoutPanel1.Controls.Add(this.labelSenderStatusUpdate);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(629, 26);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -263,12 +265,11 @@
         private System.Windows.Forms.Timer timerFlicker;
         private System.Windows.Forms.Button buttonRemoteDesk;
         private System.Windows.Forms.TextBox textBoxConnectIP;
-        private sonesson_tools.Strump.StrumpEndpoint _strumpEndpoint;
         private System.Windows.Forms.Button buttonTestP;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelSenderStatusUpdate;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.CheckBox checkBoxLogging;
         private System.Windows.Forms.TextBox textBoxConnectPort;
