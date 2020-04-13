@@ -46,6 +46,22 @@ namespace FirePiercerCommon
             SerializePayload(obj);
         }
 
+        public string ParseError { get; set; }
+
+
+        public PierceHeader Header { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public byte[] Payload { get; set; }
+
+        /// <summary>
+        /// The unique ID of the sender
+        /// </summary>
+        public uint SenderId { get; set; }
+
+        public string Message { get; set; }
+
         public byte[] MakeParcel()
         {
             byte[] payload = null;
@@ -61,7 +77,7 @@ namespace FirePiercerCommon
                     payload = Payload;
                     break;
                 case PierceHeader.Message:
-                    payload = Encoding.Unicode.GetBytes(this.Message);
+                    payload = Encoding.Unicode.GetBytes(Message);
                     break;
                 case PierceHeader.ScreenShot:
                 case PierceHeader.RemoteDeskRequest:
@@ -77,7 +93,7 @@ namespace FirePiercerCommon
             // magic bytes, 2
             var list = new List<byte> {0x02, 0x07};
             // header, 2
-            list.AddRange(BitConverter.GetBytes((short) this.Header));
+            list.AddRange(BitConverter.GetBytes((short) Header));
             // sender id, 4
             list.AddRange(BitConverter.GetBytes(SenderId));
             if (payload != null)
@@ -113,7 +129,7 @@ namespace FirePiercerCommon
         public object DeserializePayload()
         {
             object deserialize;
-            using (var memoryStream = new MemoryStream(this.Payload))
+            using (var memoryStream = new MemoryStream(Payload))
             {
                 var binaryFormatter = new BinaryFormatter();
                 deserialize = binaryFormatter.Deserialize(memoryStream);
@@ -215,22 +231,6 @@ namespace FirePiercerCommon
             message.ParseError = "Invalid Magic bytes";
             return message;
         }
-
-        public string ParseError { get; set; }
-
-
-        public PierceHeader Header { get; set; }
-
-        public DateTime Created { get; set; }
-
-        public byte[] Payload { get; set; }
-
-        /// <summary>
-        /// The unique ID of the sender
-        /// </summary>
-        public uint SenderId { get; set; }
-
-        public string Message { get; set; }
 
 
         public override string ToString()

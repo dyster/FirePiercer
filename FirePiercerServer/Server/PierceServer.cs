@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Net.Security;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
@@ -14,6 +12,10 @@ namespace FirePiercer
 {
     public class PierceServer : TCPServer
     {
+        //public BindingList<RemoteClientInfo> RemoteClientInfos { get; set; } = new BindingList<RemoteClientInfo>();
+
+        public ConcurrentDictionary<uint, RemoteClientInfo> RemoteClientList { get; set; } =
+            new ConcurrentDictionary<uint, RemoteClientInfo>();
         //private readonly HashSet<uint> _clientIds = new HashSet<uint>();
 
         public event EventHandler<RemoteDeskRequest> RemoteDeskRequestReceived;
@@ -27,16 +29,12 @@ namespace FirePiercer
 
         public event EventHandler<RoundTripEventArgs> RoundTripReceived;
 
-        //public BindingList<RemoteClientInfo> RemoteClientInfos { get; set; } = new BindingList<RemoteClientInfo>();
-
-        public ConcurrentDictionary<uint, RemoteClientInfo> RemoteClientList { get; set; } = new ConcurrentDictionary<uint, RemoteClientInfo>();
-
         public override byte[] ParseIncomingSSL(int read, byte[] initialBuffer, SslStream stream, ClientContext context)
         {
             Stats.AddBytes(read, ByteType.Received);
             Stats.AddPacket(PacketType.Received);
 
-            if (read != this.InitialBufferSize)
+            if (read != InitialBufferSize)
             {
                 Logger.Log("Initial buffer incorrect size", Severity.Warning);
                 return null;
@@ -107,9 +105,9 @@ namespace FirePiercer
                             while (RemoteClientList.ContainsKey(id))
                                 id = (uint) new Random().Next();
 
-                            if(!RemoteClientList.TryAdd(id, new RemoteClientInfo(id, context)))
+                            if (!RemoteClientList.TryAdd(id, new RemoteClientInfo(id, context)))
                                 throw new Exception("Conflicting key on creation, this is impossible");
-                            
+
 
                             var pierceMessage = new PierceMessage(PierceHeader.HandshakeOK);
                             pierceMessage.Payload = BitConverter.GetBytes(id);
@@ -139,10 +137,10 @@ namespace FirePiercer
                             {
                                 Logger.Log(message.SenderId + " is an unrecognized Client ID", Severity.Warning);
                             }
-                            
+
                             break;
                         case PierceHeader.RoundTrip:
-                            
+
                             if (RemoteClientList.ContainsKey(message.SenderId))
                             {
                                 OnRoundTripReceived(RemoteClientList[message.SenderId], message.Payload);
@@ -151,6 +149,7 @@ namespace FirePiercer
                             {
                                 Logger.Log(message.SenderId + " is an unrecognized Client ID", Severity.Warning);
                             }
+
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -174,12 +173,12 @@ namespace FirePiercer
 
         protected virtual void OnSockParcelReceived(RemoteClientInfo client, SockParcel parcel)
         {
-            SockParcelReceived?.Invoke(this, new SockeEventArgs(){Client = client, SockParcel = parcel});
+            SockParcelReceived?.Invoke(this, new SockeEventArgs() {Client = client, SockParcel = parcel});
         }
 
         protected virtual void OnRoundTripReceived(RemoteClientInfo client, byte[] payload)
         {
-            RoundTripReceived?.Invoke(this, new RoundTripEventArgs(){Client = client, Payload = payload});
+            RoundTripReceived?.Invoke(this, new RoundTripEventArgs() {Client = client, Payload = payload});
         }
     }
 
@@ -212,6 +211,5 @@ namespace FirePiercer
         {
             return ID.ToString();
         }
-        
     }
 }

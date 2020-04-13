@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using FirePiercer;
 using FirePiercerCommon;
@@ -21,45 +20,40 @@ namespace FirePiercerServer
         {
             _tcpServer = new PierceServer {InitialBufferSize = 12, Port = 443, UseSSL = true};
 
-            X509Certificate2 cert = new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
+            X509Certificate2 cert =
+                new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
             _tcpServer.Certificate = cert;
 
             _tcpServer.Clients.ClientAdded += (sender, guid) => { Logger.Log("Client Added: " + guid, Severity.Info); };
             _tcpServer.Clients.ClientRemoved += (sender, guid) =>
             {
-                Logger.Log("Client Removed: " + guid, Severity.Info );
+                Logger.Log("Client Removed: " + guid, Severity.Info);
             };
-            
+
             _strumpEndpoints = new Dictionary<uint, StrumpEndpoint>();
-            
+
             _tcpServer.MessageReceived += _tcpServer_MessageReceived;
             _tcpServer.RemoteDeskRequestReceived += OnRemoteDeskRequest;
 
             _tcpServer.SockParcelReceived += delegate(object o, SockeEventArgs e)
-            { 
-                
-
+            {
                 if (!_strumpEndpoints.ContainsKey(e.Client.ID))
                 {
                     var ep = new StrumpEndpoint();
                     _strumpEndpoints.Add(e.Client.ID, ep);
                     Logger.Log("New StrumpEndPoint for client " + e.Client.ID, Severity.Info);
-                    
+
                     ep.SockReturn += parcel =>
                     {
-                        
                         var pierceMessage = new PierceMessage(parcel);
                         Send(pierceMessage, e.Client);
-                        
+
                         //_strumpServer.SockIncoming(parcel);
                     };
 
-                    ep.Points.ListChanged += delegate(object sender, ListChangedEventArgs args)
-                    {
-                        
-                    };
+                    ep.Points.ListChanged += delegate(object sender, ListChangedEventArgs args) { };
                 }
-                
+
                 _strumpEndpoints[e.Client.ID].SockOutgoing(e.SockParcel);
             };
 
@@ -71,6 +65,9 @@ namespace FirePiercerServer
                 Send(pierceMessage, e.Client);
             };
         }
+
+
+        public Stats Stats => _tcpServer.Stats;
 
         public List<string> GetTcpPointStatus()
         {
@@ -90,7 +87,7 @@ namespace FirePiercerServer
             //Send(RemoteDeskGraphics.GetScreenShotParcel());
         }
 
-        private void _tcpServer_MessageReceived(object sender, sonesson_tools.TCP.TCPEventArgs e)
+        private void _tcpServer_MessageReceived(object sender, TCPEventArgs e)
         {
             //Logger.Log("message received", Severity.Info);
         }
@@ -117,8 +114,5 @@ namespace FirePiercerServer
         {
             _tcpServer.Send(message.MakeParcel(), client.Context);
         }
-
-
-        public Stats Stats => _tcpServer.Stats;
     }
 }

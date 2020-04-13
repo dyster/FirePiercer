@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FirePiercerCommon
+﻿namespace FirePiercerCommon
 {
     class FileTransfer
     {

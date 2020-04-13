@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using sonesson_tools;
-using sonesson_tools.Strump;
 
 namespace FirePiercerServer
 {
@@ -15,10 +13,9 @@ namespace FirePiercerServer
         private static ConcurrentQueue<ConsoleLog> Log = new ConcurrentQueue<ConsoleLog>();
         private static int LogLimit = 20;
 
-        
+
         static void Main(string[] args)
         {
-            
             Logger.Instance.LogAdded += (sender, log) =>
             {
                 if (log.Severity == Severity.Debug)
@@ -30,19 +27,14 @@ namespace FirePiercerServer
                     AddLog(ConsoleColor.Yellow, log.ToString());
                 else
                     AddLog(ConsoleColor.Cyan, log.ToString());
-
-
-               
-
-               
             };
-            
+
             new MainApp();
         }
 
         public static void AddLog(ConsoleColor colour, string text)
         {
-            Log.Enqueue(new ConsoleLog(){Color = colour, Log = text});
+            Log.Enqueue(new ConsoleLog() {Color = colour, Log = text});
             while (Log.Count > LogLimit)
             {
                 Log.TryDequeue(out var result);
@@ -91,7 +83,6 @@ namespace FirePiercerServer
 
             var lastline = "";
 
-            
 
             while (true)
             {
@@ -102,10 +93,11 @@ namespace FirePiercerServer
 
                 var statString = _piercer.Stats.ToString();
                 var consoleLogs = Program.GetLog();
-                var sockConns = _piercer.GetTcpPointStatus().Select(p => new ConsoleLog() { Color = ConsoleColor.Cyan, Log = p }).ToArray();
+                var sockConns = _piercer.GetTcpPointStatus()
+                    .Select(p => new ConsoleLog() {Color = ConsoleColor.Cyan, Log = p}).ToArray();
 
-                var socketSpaceMin = (int)Math.Floor(totalHeight * 0.3);
-                var socketSpaceMax = (int)Math.Floor(totalHeight * 0.5);
+                var socketSpaceMin = (int) Math.Floor(totalHeight * 0.3);
+                var socketSpaceMax = (int) Math.Floor(totalHeight * 0.5);
                 var socketSpace = socketSpaceMin;
 
                 if (sockConns.Length > socketSpaceMin)
@@ -121,26 +113,23 @@ namespace FirePiercerServer
                 var logSpace = totalHeight - socketSpace - 3;
                 var logCursor = line2Cursor + 1;
 
-                
-                
+
                 PrintLinePad(statCursor, statString, ConsoleColor.White, windowWidth);
                 PrintLinePad(line1Cursor, "------------------------------", ConsoleColor.White, windowWidth);
 
                 if (sockConns.Length > socketSpace)
                 {
-                    PrintLinePad(line2Cursor, $"------ +{sockConns.Length - socketSpace} sockets ".PadRight(30, '-'), ConsoleColor.White, windowWidth);
+                    PrintLinePad(line2Cursor, $"------ +{sockConns.Length - socketSpace} sockets ".PadRight(30, '-'),
+                        ConsoleColor.White, windowWidth);
                 }
                 else
                 {
                     PrintLinePad(line2Cursor, "------------------------------", ConsoleColor.White, windowWidth);
                 }
-                
 
-                
 
                 PutListInConsole(sockConns, socketSpace, socketCursor, windowWidth);
-                
-                
+
 
                 PutListInConsole(consoleLogs, logSpace, logCursor, windowWidth);
             }
@@ -187,8 +176,10 @@ namespace FirePiercerServer
                 Console.WriteLine("PierceServer: Not Started");
             else
             {
-                Console.WriteLine("PierceServer: Started"); ;
+                Console.WriteLine("PierceServer: Started");
+                ;
             }
+
             Console.WriteLine("********** ------ **********");
         }
 

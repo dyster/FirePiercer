@@ -2,8 +2,6 @@
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -18,21 +16,13 @@ namespace FirePiercer
 {
     public class PierceClient
     {
-        public string Ip { get; private set; }
-        public int Port { get; private set; }
-        public X509Certificate2 Cert { get; private set; }
+        public readonly Stats Stats = new Stats();
 
         private TcpClient _client;
+        private bool _connected;
         private uint _id;
 
         private ConcurrentSender _sender;
-
-        public readonly Stats Stats = new Stats();
-        private bool _connected;
-
-        public event EventHandler ConnectionStatusChanged;
-
-        public event EventHandler<string> SenderStatusUpdate;
 
         public PierceClient(string ip, int port, X509Certificate2 cert)
         {
@@ -42,9 +32,28 @@ namespace FirePiercer
 
 
             //_client = new TcpClient(ip, port) { NoDelay = true, Client = { DontFragment = true } };
-
-            
         }
+
+        public string Ip { get; private set; }
+        public int Port { get; private set; }
+        public X509Certificate2 Cert { get; private set; }
+
+        public bool Connected
+        {
+            get { return _connected; }
+            set
+            {
+                if (_connected != value)
+                {
+                    _connected = value;
+                    OnConnectionStatusChanged();
+                }
+            }
+        }
+
+        public event EventHandler ConnectionStatusChanged;
+
+        public event EventHandler<string> SenderStatusUpdate;
 
         public void Connect()
 
@@ -59,7 +68,6 @@ namespace FirePiercer
             try
             {
                 _client.EndConnect(ar);
-                
             }
             catch (SocketException e)
             {
@@ -78,7 +86,7 @@ namespace FirePiercer
             else
             {
                 _sender.SetStream(ssl);
-                if(_sender.Paused)
+                if (_sender.Paused)
                     _sender.UnPause();
             }
 
@@ -97,10 +105,10 @@ namespace FirePiercer
             }
 
             Logger.Log("Connected to " + Ip + ":" + Port, Severity.Info);
-            this.Connected = true;
+            Connected = true;
 
             var pierceMessage = new PierceMessage(PierceHeader.Handshake);
-            
+
             byte[] parcel = pierceMessage.MakeParcel();
 
             var tuple = new Tuple<byte[], SslStream>(parcel, ssl);
@@ -114,20 +122,6 @@ namespace FirePiercer
                 Logger.Log(e);
                 Reconnect();
                 return;
-            }
-        }
-
-        public bool Connected
-        {
-            get { return _connected; }
-            set
-            {
-                if (_connected != value)
-                {
-                    _connected = value;
-                    OnConnectionStatusChanged();
-                }
-                
             }
         }
 
@@ -149,7 +143,7 @@ namespace FirePiercer
         private void Reconnect()
         {
             _sender?.Pause();
-            this.Connected = false;
+            Connected = false;
             Thread.Sleep(2000);
 
             Connect();
@@ -183,7 +177,7 @@ namespace FirePiercer
 
             Stats.AddBytes(bytesRead, ByteType.Received);
             state.ms.Write(state.buffer, 0, bytesRead);
-            
+
             while (!PierceMessage.CheckMessageComplete(state.ms.ToArray()))
             {
                 var readbuffer = new byte[1024];
@@ -204,7 +198,7 @@ namespace FirePiercer
                         _id = BitConverter.ToUInt32(message.Payload, 0);
                         break;
                     case PierceHeader.RemoteDeskRequest:
-                        this.Send(RemoteDeskGraphics.GetScreenShotParcel());
+                        Send(RemoteDeskGraphics.GetScreenShotParcel());
                         break;
                     case PierceHeader.ScreenShot:
                     {
@@ -257,25 +251,6 @@ namespace FirePiercer
             return true;
         }
 
-        public class StateObject
-        {
-            public StateObject(SslStream stream)
-            {
-                ssl = stream;
-            }
-
-            // Client socket.  
-            public SslStream ssl = null;
-
-            // Size of receive buffer.  
-            public const int BufferSize = 65534;
-
-            // Receive buffer.  
-            public byte[] buffer = new byte[BufferSize];
-
-            public MemoryStream ms = new MemoryStream();
-        }
-
         public void Send(PierceMessage message)
         {
             message.SenderId = _id;
@@ -312,6 +287,25 @@ namespace FirePiercer
         protected virtual void OnSenderStatusUpdate(string e)
         {
             SenderStatusUpdate?.Invoke(this, e);
+        }
+
+        public class StateObject
+        {
+            // Size of receive buffer.  
+            public const int BufferSize = 65534;
+
+            // Receive buffer.  
+            public byte[] buffer = new byte[BufferSize];
+
+            public MemoryStream ms = new MemoryStream();
+
+            // Client socket.  
+            public SslStream ssl = null;
+
+            public StateObject(SslStream stream)
+            {
+                ssl = stream;
+            }
         }
     }
 }

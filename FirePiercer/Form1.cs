@@ -6,12 +6,11 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
-using sonesson_tools;
 using FirePiercer.RemoteDesk;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
+using sonesson_tools;
 using sonesson_tools.Strump;
-
 
 namespace FirePiercer
 {
@@ -31,7 +30,7 @@ namespace FirePiercer
         {
             InitializeComponent();
 
-            
+
             fastObjectListView1.SetObjects(new List<SOCKSRequest>());
 
 
@@ -59,13 +58,10 @@ namespace FirePiercer
             //socksListener.Start();
         }
 
-
-        private delegate void VoidStringDelegate(string str);
-
         private void Print(string log)
         {
-            if (this.InvokeRequired)
-                this.Invoke(new VoidStringDelegate(Print), log);
+            if (InvokeRequired)
+                Invoke(new VoidStringDelegate(Print), log);
             else
             {
                 listBox1.Items.Add(log);
@@ -75,8 +71,8 @@ namespace FirePiercer
 
         private void SenderStatusUpdate(string s)
         {
-            if (this.InvokeRequired)
-                this.Invoke(new VoidStringDelegate(SenderStatusUpdate), s);
+            if (InvokeRequired)
+                Invoke(new VoidStringDelegate(SenderStatusUpdate), s);
             else
             {
                 labelSenderStatusUpdate.Text = s;
@@ -128,7 +124,6 @@ namespace FirePiercer
             _pierceClient.Connect();
         }
 
-        
 
         private void PierceClientOnImageRecieved(object sender, ImageParcel e)
         {
@@ -147,7 +142,6 @@ namespace FirePiercer
 
             if (_pierceClient != null) label2.Text = "PierceClient: " + _pierceClient.Stats;
             if (_strumpServer != null) label3.Text = "StrumpServer: " + _strumpServer.Stats;
-            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -233,8 +227,9 @@ namespace FirePiercer
             {
                 fastObjectListView1.RefreshObject(filteredObject);
             }
-
-            
         }
+
+
+        private delegate void VoidStringDelegate(string str);
     }
 }

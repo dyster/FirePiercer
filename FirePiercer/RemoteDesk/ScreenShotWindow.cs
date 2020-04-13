@@ -10,7 +10,7 @@ namespace FirePiercer.RemoteDesk
             InitializeComponent();
 
             pictureBox1.Image = img;
-            this.Show();
+            Show();
         }
     }
 }
