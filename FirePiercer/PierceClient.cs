@@ -148,7 +148,7 @@ namespace FirePiercer
 
         private void Reconnect()
         {
-            _sender.Pause();
+            _sender?.Pause();
             this.Connected = false;
             Thread.Sleep(2000);
 

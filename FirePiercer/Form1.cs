@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using sonesson_tools;
 using FirePiercer.RemoteDesk;
 using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
+using sonesson_tools.Strump;
 
 
 namespace FirePiercer
@@ -29,8 +31,8 @@ namespace FirePiercer
         {
             InitializeComponent();
 
-            _strumpServer.SetSyncContext(fastDataListView1);
-
+            
+            fastObjectListView1.SetObjects(new List<SOCKSRequest>());
 
 
             Logger.Instance.LogAdded += (sender, log) =>
@@ -50,11 +52,8 @@ namespace FirePiercer
                 _pierceClient.Send(pierceMessage);
             };
 
-
-            fastDataListView1.DataSource = _strumpServer.SockConnections;
-
-            
-
+            _strumpServer.ConnectionAdded += (sender, request) => { fastObjectListView1.AddObject(request); };
+            _strumpServer.ConnectionRemoved += (sender, request) => { fastObjectListView1.RemoveObject(request); };
 
             //var socksListener = new Org.Mentalis.Proxy.Socks.SocksListener(1081);
             //socksListener.Start();
@@ -153,6 +152,7 @@ namespace FirePiercer
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            timerLong.Enabled = true;
             timerFlicker.Enabled = true;
         }
 
@@ -223,6 +223,18 @@ namespace FirePiercer
 
         private void textBoxConnectPort_TextChanged(object sender, EventArgs e)
         {
+        }
+
+        private void timerFlicker_Tick_1(object sender, EventArgs e)
+        {
+            var filteredObjects = fastObjectListView1.FilteredObjects;
+
+            foreach (var filteredObject in filteredObjects)
+            {
+                fastObjectListView1.RefreshObject(filteredObject);
+            }
+
+            
         }
     }
 }

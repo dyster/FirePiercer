@@ -24,7 +24,7 @@ namespace FirePiercerServer
             X509Certificate2 cert = new X509Certificate2(AppDomain.CurrentDomain.BaseDirectory + "pluralsight.pfx", "1234");
             _tcpServer.Certificate = cert;
 
-            _tcpServer.Clients.ListChanged += ClientsOnListChanged;
+            _tcpServer.Clients.ClientAdded += (sender, guid) => { Logger.Log("Client Added: " + guid, Severity.Info); };
             _tcpServer.Clients.ClientRemoved += (sender, guid) =>
             {
                 Logger.Log("Client Removed: " + guid, Severity.Info );
@@ -56,7 +56,7 @@ namespace FirePiercerServer
 
                     ep.Points.ListChanged += delegate(object sender, ListChangedEventArgs args)
                     {
-                        Program.SetSockConnections(ep.Points.ToList());
+                        
                     };
                 }
                 
@@ -72,43 +72,17 @@ namespace FirePiercerServer
             };
         }
 
-        private void ClientsOnListChanged(object sender, ListChangedEventArgs e)
+        public List<string> GetTcpPointStatus()
         {
-            string log = "Client Status: ";
-            switch (e.ListChangedType)
-            {
-                case ListChangedType.Reset:
-                    log += "List has been reset";
-                    break;
-                case ListChangedType.ItemAdded:
-                    log += "New " + _tcpServer.Clients[e.NewIndex];
-                    break;
-                case ListChangedType.ItemDeleted:
-                    log += "Deleted a client";
-                    break;
-                case ListChangedType.ItemMoved:
-                    // not interesting
-                    break;
-                case ListChangedType.ItemChanged:
-                    log += "Changed? " + _tcpServer.Clients[e.NewIndex];
-                    break;
-                case ListChangedType.PropertyDescriptorAdded:
-                    log += "PropertyDescriptorAdded? " + _tcpServer.Clients[e.NewIndex];
-                    break;
-                case ListChangedType.PropertyDescriptorDeleted:
-                    log += "PropertyDescriptorDeleted " + _tcpServer.Clients[e.NewIndex];
-                    break;
-                case ListChangedType.PropertyDescriptorChanged:
-                    log += e.PropertyDescriptor.Name + " changed to " + e.PropertyDescriptor.GetValue(_tcpServer.Clients[e.NewIndex]) + " on " + _tcpServer.Clients[e.NewIndex];
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            
-            Logger.Log(log, Severity.Info);
-            
-        }
+            var list = new List<string>();
 
+            foreach (var keyValuePair in _strumpEndpoints)
+            {
+                list.AddRange(keyValuePair.Value.GetPointStatus());
+            }
+
+            return list;
+        }
 
         private void OnRemoteDeskRequest(object sender, RemoteDeskRequest request)
         {

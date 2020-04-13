@@ -15,7 +15,7 @@ namespace FirePiercerServer
         private static ConcurrentQueue<ConsoleLog> Log = new ConcurrentQueue<ConsoleLog>();
         private static int LogLimit = 20;
 
-        public static ConcurrentDictionary<uint, TcpPoint> SockConnections = new ConcurrentDictionary<uint, TcpPoint>();
+        
         static void Main(string[] args)
         {
             
@@ -52,15 +52,6 @@ namespace FirePiercerServer
         public static ConsoleLog[] GetLog()
         {
             return Log.ToArray();
-        }
-
-        public static void SetSockConnections(List<TcpPoint> list)
-        {
-            SockConnections.Clear();
-            foreach (var sockConnectionBase in list)
-            {
-                SockConnections.TryAdd(sockConnectionBase.UniqueId, sockConnectionBase);
-            }
         }
     }
 
@@ -104,44 +95,23 @@ namespace FirePiercerServer
 
             while (true)
             {
-                var windowWidth = Console.WindowWidth;
-
-                void PrintLinePad(int i, string stat1, ConsoleColor colour)
-                {
-                    Console.SetCursorPosition(0, i);
-                    Console.ForegroundColor = colour;
-                    Console.WriteLine(stat1.PadRight(windowWidth));
-                }
-
-                void PutListInConsole(ConsoleLog[] consoleLogs1, int logSpace1, int logCursor1)
-                {
-                    if (consoleLogs1.Length > logSpace1)
-                    {
-                        var tmp = new ConsoleLog[logSpace1];
-                        Array.Copy(consoleLogs1, consoleLogs1.Length - logSpace1, tmp, 0, tmp.Length);
-                        consoleLogs1 = tmp;
-                    }
-
-
-                    for (var index = 0; index < logSpace1; index++)
-                    {
-                        var cursor = logCursor1 + index;
-                        if (index < consoleLogs1.Length)
-                        {
-                            var consoleLog = consoleLogs1[index];
-                            PrintLinePad(cursor, consoleLog.Log, consoleLog.Color);
-                        }
-                        else
-                        {
-                            PrintLinePad(cursor, "", ConsoleColor.White);
-                        }
-                    }
-                }
-
                 Thread.Sleep(1000);
+
+                var windowWidth = Console.WindowWidth;
                 var totalHeight = Console.WindowHeight - 1;
 
-                var socketSpace = (int)Math.Floor(totalHeight * 0.3);
+                var statString = _piercer.Stats.ToString();
+                var consoleLogs = Program.GetLog();
+                var sockConns = _piercer.GetTcpPointStatus().Select(p => new ConsoleLog() { Color = ConsoleColor.Cyan, Log = p }).ToArray();
+
+                var socketSpaceMin = (int)Math.Floor(totalHeight * 0.3);
+                var socketSpaceMax = (int)Math.Floor(totalHeight * 0.5);
+                var socketSpace = socketSpaceMin;
+
+                if (sockConns.Length > socketSpaceMin)
+                {
+                    socketSpace = sockConns.Length < socketSpaceMax ? sockConns.Length : socketSpaceMax;
+                }
 
                 var statCursor = 0;
                 var line1Cursor = 1;
@@ -151,31 +121,63 @@ namespace FirePiercerServer
                 var logSpace = totalHeight - socketSpace - 3;
                 var logCursor = line2Cursor + 1;
 
-                //Console.Clear();
+                
+                
+                PrintLinePad(statCursor, statString, ConsoleColor.White, windowWidth);
+                PrintLinePad(line1Cursor, "------------------------------", ConsoleColor.White, windowWidth);
 
-                var stat = _piercer.Stats.ToString();
-
-                //if (stat != lastline)
-                //{
-                    PrintLinePad(statCursor, stat, ConsoleColor.White);
-                    //}
-                lastline = stat;
+                if (sockConns.Length > socketSpace)
+                {
+                    PrintLinePad(line2Cursor, $"------ +{sockConns.Length - socketSpace} sockets ".PadRight(30, '-'), ConsoleColor.White, windowWidth);
+                }
+                else
+                {
+                    PrintLinePad(line2Cursor, "------------------------------", ConsoleColor.White, windowWidth);
+                }
+                
 
                 
-                PrintLinePad(line1Cursor, "------------------------------", ConsoleColor.White);
-                PrintLinePad(line2Cursor, "------------------------------", ConsoleColor.White);
 
-
-                var sockConns = Program.SockConnections.ToArray().Select(s => new ConsoleLog(){Color = ConsoleColor.Cyan, Log = s.Value.ToString()}).ToArray();
-
-                PutListInConsole(sockConns, socketSpace, socketCursor);
+                PutListInConsole(sockConns, socketSpace, socketCursor, windowWidth);
                 
-                var consoleLogs = Program.GetLog();
+                
 
-                PutListInConsole(consoleLogs, logSpace, logCursor);
+                PutListInConsole(consoleLogs, logSpace, logCursor, windowWidth);
             }
 
             //DoMenu();
+        }
+
+        private void PutListInConsole(ConsoleLog[] consoleLogs, int lines, int startLine, int windowWidth)
+        {
+            if (consoleLogs.Length > lines)
+            {
+                var tmp = new ConsoleLog[lines];
+                Array.Copy(consoleLogs, consoleLogs.Length - lines, tmp, 0, tmp.Length);
+                consoleLogs = tmp;
+            }
+
+
+            for (var index = 0; index < lines; index++)
+            {
+                var cursor = startLine + index;
+                if (index < consoleLogs.Length)
+                {
+                    var consoleLog = consoleLogs[index];
+                    PrintLinePad(cursor, consoleLog.Log, consoleLog.Color, windowWidth);
+                }
+                else
+                {
+                    PrintLinePad(cursor, "", ConsoleColor.White, windowWidth);
+                }
+            }
+        }
+
+        private static void PrintLinePad(int line, string text, ConsoleColor colour, int windowWidth)
+        {
+            Console.SetCursorPosition(0, line);
+            Console.ForegroundColor = colour;
+            Console.WriteLine(text.PadRight(windowWidth));
         }
 
         private void DoStatus()

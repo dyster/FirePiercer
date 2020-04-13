@@ -35,33 +35,43 @@
             this.buttonStartClient = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.buttonSendClient = new System.Windows.Forms.Button();
-            this.timerFlicker = new System.Windows.Forms.Timer(this.components);
+            this.timerLong = new System.Windows.Forms.Timer(this.components);
             this.buttonRemoteDesk = new System.Windows.Forms.Button();
             this.buttonTestP = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            
             this.labelSenderStatusUpdate = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.checkBoxLogging = new System.Windows.Forms.CheckBox();
             this.textBoxConnectIP = new System.Windows.Forms.TextBox();
-            this._strumpServer = new sonesson_tools.Strump.StrumpServer();
             this.textBoxConnectPort = new System.Windows.Forms.TextBox();
-            this.fastDataListView1 = new BrightIdeasSoftware.FastDataListView();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.fastObjectListView1 = new BrightIdeasSoftware.FastObjectListView();
+            this._strumpServer = new sonesson_tools.Strump.StrumpServer();
+            this.olvColumnId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumnSent = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumnRec = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumnState = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumnIp = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumnAddress = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.timerFlicker = new System.Windows.Forms.Timer(this.components);
             this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fastDataListView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fastObjectListView1)).BeginInit();
             this.SuspendLayout();
             // 
             // listBox1
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(783, 161);
+            this.listBox1.Location = new System.Drawing.Point(0, 0);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(873, 524);
+            this.listBox1.Size = new System.Drawing.Size(735, 551);
             this.listBox1.TabIndex = 0;
             this.listBox1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox1_DrawItem);
             // 
@@ -92,10 +102,10 @@
             this.buttonSendClient.UseVisualStyleBackColor = true;
             this.buttonSendClient.Click += new System.EventHandler(this.buttonSendClient_Click);
             // 
-            // timerFlicker
+            // timerLong
             // 
-            this.timerFlicker.Interval = 2000;
-            this.timerFlicker.Tick += new System.EventHandler(this.timerFlicker_Tick);
+            this.timerLong.Interval = 2000;
+            this.timerLong.Tick += new System.EventHandler(this.timerFlicker_Tick);
             // 
             // buttonRemoteDesk
             // 
@@ -148,15 +158,14 @@
             this.label3.Size = new System.Drawing.Size(49, 14);
             this.label3.TabIndex = 15;
             this.label3.Text = "label3";
-           
             // 
             // labelSenderStatusUpdate
             // 
             this.labelSenderStatusUpdate.AutoSize = true;
-            this.labelSenderStatusUpdate.Location = new System.Drawing.Point(3, 80);
+            this.labelSenderStatusUpdate.Location = new System.Drawing.Point(3, 61);
             this.labelSenderStatusUpdate.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.labelSenderStatusUpdate.Name = "labelSenderStatusUpdate";
-            this.labelSenderStatusUpdate.Size = new System.Drawing.Size(35, 13);
+            this.labelSenderStatusUpdate.Size = new System.Drawing.Size(128, 13);
             this.labelSenderStatusUpdate.TabIndex = 16;
             this.labelSenderStatusUpdate.Text = "labelSenderStatusUpdate";
             // 
@@ -165,7 +174,6 @@
             this.flowLayoutPanel1.Controls.Add(this.label1);
             this.flowLayoutPanel1.Controls.Add(this.label2);
             this.flowLayoutPanel1.Controls.Add(this.label3);
-            
             this.flowLayoutPanel1.Controls.Add(this.labelSenderStatusUpdate);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(629, 26);
@@ -192,14 +200,6 @@
             this.textBoxConnectIP.TabIndex = 11;
             this.textBoxConnectIP.Text = global::FirePiercer.Properties.Settings.Default.ClientIP;
             // 
-            // _strumpServer
-            // 
-            this._strumpServer.Certificate = null;
-            this._strumpServer.InitialBufferSize = 2;
-            this._strumpServer.Port = 1080;
-            this._strumpServer.Stats = stats1;
-            this._strumpServer.UseSSL = false;
-            // 
             // textBoxConnectPort
             // 
             this.textBoxConnectPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::FirePiercer.Properties.Settings.Default, "ClientPort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -210,29 +210,105 @@
             this.textBoxConnectPort.Text = global::FirePiercer.Properties.Settings.Default.ClientPort;
             this.textBoxConnectPort.TextChanged += new System.EventHandler(this.textBoxConnectPort_TextChanged);
             // 
-            // fastDataListView1
+            // splitContainer1
             // 
-            this.fastDataListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.fastDataListView1.CellEditUseWholeCell = false;
-            this.fastDataListView1.DataSource = null;
-            this.fastDataListView1.HideSelection = false;
-            this.fastDataListView1.Location = new System.Drawing.Point(12, 161);
-            this.fastDataListView1.Name = "fastDataListView1";
-            this.fastDataListView1.ShowGroups = false;
-            this.fastDataListView1.Size = new System.Drawing.Size(765, 524);
-            this.fastDataListView1.TabIndex = 20;
-            this.fastDataListView1.UseCompatibleStateImageBehavior = false;
-            this.fastDataListView1.View = System.Windows.Forms.View.Details;
-            this.fastDataListView1.VirtualMode = true;
+            this.splitContainer1.Location = new System.Drawing.Point(4, 155);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.fastObjectListView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.listBox1);
+            this.splitContainer1.Size = new System.Drawing.Size(1664, 551);
+            this.splitContainer1.SplitterDistance = 925;
+            this.splitContainer1.TabIndex = 20;
+            // 
+            // fastObjectListView1
+            // 
+            this.fastObjectListView1.AllColumns.Add(this.olvColumnId);
+            this.fastObjectListView1.AllColumns.Add(this.olvColumnSent);
+            this.fastObjectListView1.AllColumns.Add(this.olvColumnRec);
+            this.fastObjectListView1.AllColumns.Add(this.olvColumnState);
+            this.fastObjectListView1.AllColumns.Add(this.olvColumnIp);
+            this.fastObjectListView1.AllColumns.Add(this.olvColumnAddress);
+            this.fastObjectListView1.CellEditUseWholeCell = false;
+            this.fastObjectListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvColumnId,
+            this.olvColumnSent,
+            this.olvColumnRec,
+            this.olvColumnState,
+            this.olvColumnIp,
+            this.olvColumnAddress});
+            this.fastObjectListView1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.fastObjectListView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fastObjectListView1.HideSelection = false;
+            this.fastObjectListView1.Location = new System.Drawing.Point(0, 0);
+            this.fastObjectListView1.Name = "fastObjectListView1";
+            this.fastObjectListView1.ShowGroups = false;
+            this.fastObjectListView1.Size = new System.Drawing.Size(925, 551);
+            this.fastObjectListView1.TabIndex = 21;
+            this.fastObjectListView1.UseCompatibleStateImageBehavior = false;
+            this.fastObjectListView1.View = System.Windows.Forms.View.Details;
+            this.fastObjectListView1.VirtualMode = true;
+            // 
+            // _strumpServer
+            // 
+            this._strumpServer.Certificate = null;
+            this._strumpServer.InitialBufferSize = 2;
+            this._strumpServer.Port = 1080;
+            this._strumpServer.Stats = stats1;
+            this._strumpServer.UseSSL = false;
+            // 
+            // olvColumnId
+            // 
+            this.olvColumnId.AspectName = "UniqueId";
+            this.olvColumnId.Text = "UniqueId";
+            // 
+            // olvColumnSent
+            // 
+            this.olvColumnSent.AspectName = "ParcelsSent";
+            this.olvColumnSent.Text = "Parcels Sent";
+            // 
+            // olvColumnRec
+            // 
+            this.olvColumnRec.AspectName = "ParcelsReceived";
+            this.olvColumnRec.Text = "Parcels Received";
+            // 
+            // olvColumnState
+            // 
+            this.olvColumnState.AspectName = "State";
+            this.olvColumnState.Text = "State";
+            this.olvColumnState.Width = 150;
+            // 
+            // olvColumnIp
+            // 
+            this.olvColumnIp.AspectName = "IP";
+            this.olvColumnIp.Text = "IP";
+            this.olvColumnIp.Width = 90;
+            // 
+            // olvColumnAddress
+            // 
+            this.olvColumnAddress.AspectName = "Address";
+            this.olvColumnAddress.Text = "Hostname";
+            this.olvColumnAddress.Width = 125;
+            // 
+            // timerFlicker
+            // 
+            this.timerFlicker.Interval = 500;
+            this.timerFlicker.Tick += new System.EventHandler(this.timerFlicker_Tick_1);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1668, 707);
-            this.Controls.Add(this.fastDataListView1);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.textBoxConnectPort);
             this.Controls.Add(this.checkBoxLogging);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -242,7 +318,7 @@
             this.Controls.Add(this.buttonSendClient);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonStartClient);
-            this.Controls.Add(this.listBox1);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Form1";
@@ -250,7 +326,11 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fastDataListView1)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.fastObjectListView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -262,7 +342,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button buttonSendClient;
         private sonesson_tools.Strump.StrumpServer _strumpServer;
-        private System.Windows.Forms.Timer timerFlicker;
+        private System.Windows.Forms.Timer timerLong;
         private System.Windows.Forms.Button buttonRemoteDesk;
         private System.Windows.Forms.TextBox textBoxConnectIP;
         private System.Windows.Forms.Button buttonTestP;
@@ -273,7 +353,15 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.CheckBox checkBoxLogging;
         private System.Windows.Forms.TextBox textBoxConnectPort;
-        private BrightIdeasSoftware.FastDataListView fastDataListView1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private BrightIdeasSoftware.FastObjectListView fastObjectListView1;
+        private BrightIdeasSoftware.OLVColumn olvColumnId;
+        private BrightIdeasSoftware.OLVColumn olvColumnSent;
+        private BrightIdeasSoftware.OLVColumn olvColumnRec;
+        private BrightIdeasSoftware.OLVColumn olvColumnState;
+        private BrightIdeasSoftware.OLVColumn olvColumnIp;
+        private BrightIdeasSoftware.OLVColumn olvColumnAddress;
+        private System.Windows.Forms.Timer timerFlicker;
     }
 }
 
