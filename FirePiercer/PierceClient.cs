@@ -105,7 +105,7 @@ namespace FirePiercer
             }
 
             Logger.Log("Connected to " + Ip + ":" + Port, Severity.Info);
-            Connected = true;
+            
 
             var pierceMessage = new PierceMessage(PierceHeader.Handshake);
 
@@ -181,9 +181,32 @@ namespace FirePiercer
             while (!PierceMessage.CheckMessageComplete(state.ms.ToArray()))
             {
                 var readbuffer = new byte[1024];
-                bytesRead = state.ssl.Read(readbuffer, 0, readbuffer.Length);
-                Stats.AddBytes(bytesRead, ByteType.Received);
-                state.ms.Write(readbuffer, 0, bytesRead);
+                try
+                {
+                    bytesRead = state.ssl.Read(readbuffer, 0, readbuffer.Length);
+                    Stats.AddBytes(bytesRead, ByteType.Received);
+                    state.ms.Write(readbuffer, 0, bytesRead);
+                }
+                catch (IOException e)
+                {
+                    Logger.Log("Error while receiving PierceMessage: " + e.Message, Severity.Warning);
+                    Reconnect();
+                    return;
+                }
+                catch (SocketException e)
+                {
+                    Logger.Log("Error while receiving PierceMessage: " + e.Message, Severity.Warning);
+                    Reconnect();
+                    return;
+                }
+                catch (ObjectDisposedException e)
+                {
+                    Logger.Log("Error while receiving PierceMessage: " + e.Message, Severity.Warning);
+                    Reconnect();
+                    return;
+                }
+                
+                
             }
 
             PierceMessage message = PierceMessage.Parse(state.ms.ToArray());
@@ -196,6 +219,8 @@ namespace FirePiercer
                 {
                     case PierceHeader.HandshakeOK:
                         _id = BitConverter.ToUInt32(message.Payload, 0);
+                        Connected = true;
+                        Logger.Log("Handshake OK, client id " + _id, Severity.Info);
                         break;
                     case PierceHeader.RemoteDeskRequest:
                         Send(RemoteDeskGraphics.GetScreenShotParcel());

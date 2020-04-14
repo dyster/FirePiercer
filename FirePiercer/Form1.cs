@@ -11,6 +11,7 @@ using FirePiercerCommon;
 using FirePiercerCommon.RemoteDesk;
 using sonesson_tools;
 using sonesson_tools.Strump;
+using sonesson_tools.TCP;
 
 namespace FirePiercer
 {
@@ -116,6 +117,11 @@ namespace FirePiercer
                 if (_pierceClient.Connected && !_strumpServer.Running)
                 {
                     _strumpServer.Start();
+                }
+                else if (!_pierceClient.Connected)
+                {
+                    Logger.Log("Pierce Client disconnected, closing strump server", Severity.Warning);
+                    _strumpServer.Stop();
                 }
             };
 
