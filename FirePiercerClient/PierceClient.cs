@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
-using FirePiercer.RemoteDesk;
 using FirePiercerCommon;
-using FirePiercerCommon.RemoteDesk;
 using sonesson_tools;
 using sonesson_tools.Strump;
 using sonesson_tools.TCP;
 
-namespace FirePiercer
+namespace FirePiercerClient
 {
-    public class PierceClient
+    public partial class PierceClient : Component
     {
         public readonly Stats Stats = new Stats();
 
@@ -23,8 +25,19 @@ namespace FirePiercer
         private uint _id;
 
         private ConcurrentSender _sender;
+        public PierceClient()
+        {
+            InitializeComponent();
+        }
 
-        public PierceClient(string ip, int port, X509Certificate2 cert)
+        public PierceClient(IContainer container)
+        {
+            container.Add(this);
+
+            InitializeComponent();
+        }
+
+        public void Initialize(string ip, int port, X509Certificate2 cert)
         {
             Ip = ip;
             Port = port;
@@ -58,7 +71,8 @@ namespace FirePiercer
         public void Connect()
 
         {
-            _client = new TcpClient() {NoDelay = true, Client = {DontFragment = true}};
+            //_client = new TcpClient() { NoDelay = true, Client = { DontFragment = true } };
+            _client = new TcpClient();
             Logger.Log("Connecting to " + Ip + ":" + Port, Severity.Info);
             _client.BeginConnect(Ip, Port, ConnectCallback, null);
         }
@@ -105,7 +119,7 @@ namespace FirePiercer
             }
 
             Logger.Log("Connected to " + Ip + ":" + Port, Severity.Info);
-            
+
 
             var pierceMessage = new PierceMessage(PierceHeader.Handshake);
 
@@ -128,7 +142,7 @@ namespace FirePiercer
         private void WriteCallBack(IAsyncResult ar)
         {
             Stats.AddPacket(PacketType.Sent);
-            var tuple = (Tuple<byte[], SslStream>) ar.AsyncState;
+            var tuple = (Tuple<byte[], SslStream>)ar.AsyncState;
 
             tuple.Item2.EndWrite(ar);
             Stats.AddBytes(tuple.Item1.Length, ByteType.Sent);
@@ -152,7 +166,7 @@ namespace FirePiercer
         private void ReadCallBack(IAsyncResult ar)
         {
             Stats.AddPacket(PacketType.Received);
-            var state = (StateObject) ar.AsyncState;
+            var state = (StateObject)ar.AsyncState;
 
             int bytesRead;
             try
@@ -205,8 +219,8 @@ namespace FirePiercer
                     Reconnect();
                     return;
                 }
-                
-                
+
+
             }
 
             PierceMessage message = PierceMessage.Parse(state.ms.ToArray());
@@ -223,15 +237,12 @@ namespace FirePiercer
                         Logger.Log("Handshake OK, client id " + _id, Severity.Info);
                         break;
                     case PierceHeader.RemoteDeskRequest:
-                        Send(RemoteDeskGraphics.GetScreenShotParcel());
+                        // nein
                         break;
                     case PierceHeader.ScreenShot:
-                    {
-                        var imageParcel = message.GetImageParcel();
-
-                        OnImageRecieved(imageParcel);
+                                                    
                         break;
-                    }
+                        
 
                     case PierceHeader.Invalid:
                         break;
@@ -283,14 +294,7 @@ namespace FirePiercer
             _sender.Send(makeParcel);
             Stats.AddPacket(PacketType.Sent);
             Stats.AddBytes(makeParcel.Length, ByteType.Sent);
-        }
-
-        public event EventHandler<ImageParcel> ImageRecieved;
-
-        protected virtual void OnImageRecieved(ImageParcel e)
-        {
-            ImageRecieved?.Invoke(this, e);
-        }
+        }        
 
         protected virtual void OnSockParcelReceived(SockParcel e)
         {

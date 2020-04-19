@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirePiercer", "FirePiercer\FirePiercer.csproj", "{29697B57-0733-4732-A5C0-33AB31B43802}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirePiercerServer", "FirePiercerServer\FirePiercerServer.csproj", "{6B9C5E63-AF50-49CA-87B4-19C0F97CE84F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sonesson-toolsNETSTANDARD", "..\sonesson-tools\sonesson-toolsNETSTANDARD.csproj", "{0B694BCB-6F7D-47C7-BDD0-1EA14F3D8E85}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirePiercerCommon", "FirePiercerCommon\FirePiercerCommon.csproj", "{1256D81D-70A9-4AC9-A759-D7A67031C65A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirePiercerClient", "FirePiercerClient\FirePiercerClient.csproj", "{C2901EFA-2A17-49E8-8442-07263C993000}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectListView2012", "..\ObjectListViewCore\ObjectListView\ObjectListView2012.csproj", "{7B2B7D88-0160-464C-A476-CB52718F04A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{29697B57-0733-4732-A5C0-33AB31B43802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29697B57-0733-4732-A5C0-33AB31B43802}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29697B57-0733-4732-A5C0-33AB31B43802}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29697B57-0733-4732-A5C0-33AB31B43802}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B9C5E63-AF50-49CA-87B4-19C0F97CE84F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6B9C5E63-AF50-49CA-87B4-19C0F97CE84F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B9C5E63-AF50-49CA-87B4-19C0F97CE84F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +31,14 @@ Global
 		{1256D81D-70A9-4AC9-A759-D7A67031C65A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1256D81D-70A9-4AC9-A759-D7A67031C65A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1256D81D-70A9-4AC9-A759-D7A67031C65A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2901EFA-2A17-49E8-8442-07263C993000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2901EFA-2A17-49E8-8442-07263C993000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2901EFA-2A17-49E8-8442-07263C993000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2901EFA-2A17-49E8-8442-07263C993000}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B2B7D88-0160-464C-A476-CB52718F04A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B2B7D88-0160-464C-A476-CB52718F04A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B2B7D88-0160-464C-A476-CB52718F04A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B2B7D88-0160-464C-A476-CB52718F04A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

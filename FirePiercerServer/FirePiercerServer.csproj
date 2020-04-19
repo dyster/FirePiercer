@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Server\PierceServer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="Server\PierceServer.cs" />
   </ItemGroup>
 
   <ItemGroup>
